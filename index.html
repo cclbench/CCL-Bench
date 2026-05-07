@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCL-Bench · Benchmark Results</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<!-- STYLES_START -->
+<style>
+/* ── Variables ─────────────────────────────────────────────────────────── */
+:root {
+  --bg:          #f1f5f9;
+  --surface:     #ffffff;
+  --border:      #e2e8f0;
+  --text:        #0f172a;
+  --muted:       #64748b;
+  --primary:     #1e293b;
+  --accent:      #2563eb;
+  --accent-dim:  #eff6ff;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --amber:       #d97706;
+  --amber-bg:    #fffbeb;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --radius:      6px;
+  --shadow:      0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg:   0 20px 60px rgba(0,0,0,.18);
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.site-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.site-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+.site-header .tagline {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+.site-header .gen-ts {
+  font-size: 11px;
+  color: #475569;
+  text-align: right;
+  white-space: nowrap;
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.header-logo {
+  height: 48px;
+  width: auto;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* ── About strip ────────────────────────────────────────────────────────── */
+.about-strip {
+  background: var(--accent-dim);
+  border-bottom: 1px solid #bfdbfe;
+  padding: 12px 28px;
+  font-size: 13px;
+  color: #1e3a5f;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.about-strip p + p { margin-top: 4px; }
+.about-strip a { color: var(--accent); text-decoration: none; }
+.about-strip a:hover { text-decoration: underline; }
+
+/* ── Stats strip ────────────────────────────────────────────────────────── */
+.stats-strip {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.stat { display: flex; align-items: baseline; gap: 5px; }
+.stat strong { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1; }
+.stats-chips { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chips-cat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.chips-cat-label:first-child { margin-left: 0; }
+.chip {
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────────────────── */
+.toolbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.search-wrap {
+  position: relative;
+  max-width: 360px;
+  flex: 1;
+}
+.search-wrap .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  line-height: 1;
+  font-size: 13px;
+}
+#search {
+  width: 100%;
+  padding: 7px 10px 7px 30px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color .15s, box-shadow .15s;
+}
+#search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+.filter-count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* ── Table wrapper ──────────────────────────────────────────────────────── */
+.table-outer {
+  flex: 1;
+  overflow-x: auto;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead { position: sticky; top: 0; z-index: 6; }
+
+/* Header rows */
+.th-group-row th {
+  background: #0f172a;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-right: 1px solid #1e293b;
+  text-align: center;
+}
+.th-group-row .g-workload { text-align: left; }
+
+th {
+  background: #1e293b;
+  color: #cbd5e1;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border-right: 1px solid #334155;
+  transition: background .1s;
+}
+th:last-child { border-right: none; }
+th:hover:not(.no-sort) { background: #263348; }
+th.sorted-asc::after  { content: " ↑"; opacity: .75; }
+th.sorted-desc::after { content: " ↓"; opacity: .75; }
+th.no-sort            { cursor: default; }
+th.th-metric          { background: #1a3050; text-align: center; }
+th.th-metric:hover    { background: #1f3a5f; }
+
+/* Metric column header info icon */
+.th-info-btn {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  color: #7ab3d8;
+  opacity: 0.75;
+  vertical-align: middle;
+  line-height: 1;
+  transition: opacity .12s, color .12s;
+}
+.th-info-btn:hover { opacity: 1; color: #fff; }
+
+/* Body rows */
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f8fafc;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td            { background: var(--accent-dim) !important; }
+td:last-child          { border-right: none; }
+
+/* Workload cell */
+.wl-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 260px;
+}
+.wl-name {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 11.5px;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wl-name a { color: inherit; text-decoration: none; }
+.wl-name a:hover { text-decoration: underline; }
+
+/* Info button */
+.info-btn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #bfdbfe;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.info-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.b-inference { background: #dbeafe; color: #1d4ed8; }
+.b-training  { background: #dcfce7; color: #15803d; }
+.b-serving   { background: #fef3c7; color: #b45309; }
+.b-tpu       { background: #fce7f3; color: #be185d; }
+.b-gpu       { background: #ede9fe; color: #6d28d9; }
+.b-moe       { background: #fef9c3; color: #854d0e; margin-left: 4px; }
+
+/* Phase section header rows */
+.phase-section-row td {
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  border-top: 2px solid var(--border);
+  padding: 6px 12px;
+}
+.phase-section-row:first-child td { border-top: none; }
+.phase-section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phase-section-count {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Metric pill */
+td.td-metric { text-align: center; }
+.metric-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 12.5px;
+  min-width: 64px;
+  text-align: center;
+}
+.mp-high { background: var(--green-bg); color: var(--green); }
+.mp-mid  { background: var(--amber-bg); color: var(--amber); }
+.mp-low  { background: var(--red-bg);   color: var(--red);   }
+.mp-na   { color: var(--muted); font-weight: 400; font-size: 12px; }
+
+/* Empty / error state */
+.empty-state {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty-state .es-icon { font-size: 36px; margin-bottom: 14px; }
+.empty-state h2 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.empty-state p  { font-size: 13px; line-height: 1.6; max-width: 480px; margin: 0 auto 16px; }
+.empty-state pre {
+  display: inline-block;
+  text-align: left;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--text);
+}
+
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.55);
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: pop-in .18s ease;
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(12px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+
+.modal-hd {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+.modal-hd h2 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: ui-monospace, monospace;
+  line-height: 1.4;
+  word-break: break-all;
+}
+.modal-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s;
+}
+.modal-close:hover { background: #f1f5f9; color: var(--text); }
+
+.modal-bd { padding: 18px 22px 22px; }
+
+.m-section { margin-bottom: 18px; }
+.m-section:last-child { margin-bottom: 0; }
+.m-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+.m-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #374151;
+  background: var(--bg);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.kv-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 4px 14px;
+}
+.kv-k { font-size: 12px; color: var(--muted); }
+.kv-v { font-size: 12px; font-weight: 500; word-break: break-word; }
+.kv-v a { color: var(--accent); }
+
+.m-cat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--accent);
+  margin: 12px 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #bfdbfe;
+}
+.m-cat-label:first-child { margin-top: 0; }
+
+.metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.metric-row .mr-label { font-size: 13px; font-weight: 600; }
+.metric-row .mr-desc  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── Upload Button ─────────────────────────────────────────────────────── */
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+.upload-btn:hover {
+  background: #1d4ed8;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+.upload-btn .upload-icon { font-size: 15px; line-height: 1; }
+
+/* ── Upload Panel (slide-over) ─────────────────────────────────────────── */
+.upload-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.45);
+  z-index: 100;
+}
+.upload-backdrop.open { display: block; }
+
+.upload-panel {
+  position: fixed;
+  top: 0;
+  right: -580px;
+  width: 560px;
+  max-width: 94vw;
+  height: 100vh;
+  background: var(--surface);
+  box-shadow: -8px 0 40px rgba(0,0,0,.18);
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  transition: right .28s cubic-bezier(.4,0,.2,1);
+}
+.upload-panel.open { right: 0; }
+
+.upload-panel-hd {
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.upload-panel-hd h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.upload-panel-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s;
+}
+.upload-panel-close:hover { background: #f1f5f9; color: var(--text); }
+
+.upload-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+}
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed #94a3b8;
+  border-radius: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  margin-bottom: 18px;
+}
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.drop-zone .dz-icon { font-size: 36px; margin-bottom: 10px; }
+.drop-zone .dz-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.drop-zone .dz-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+.drop-zone .dz-browse {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Form fields */
+.upload-field { margin-bottom: 14px; }
+.upload-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin-bottom: 5px;
+}
+.upload-field input,
+.upload-field textarea,
+.upload-field select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.upload-field input:focus,
+.upload-field textarea:focus,
+.upload-field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+.upload-field textarea { resize: vertical; min-height: 60px; }
+
+/* File list */
+.file-list { margin-bottom: 18px; }
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.file-item .fi-name {
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+}
+.file-item .fi-size { color: var(--muted); white-space: nowrap; margin-left: 8px; }
+.file-item .fi-remove {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s, color .12s;
+}
+.file-item .fi-remove:hover { background: var(--red-bg); color: var(--red); }
+
+/* Submit button */
+.upload-submit {
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+}
+.upload-submit:hover { background: #1d4ed8; }
+.upload-submit:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Progress bar */
+.upload-progress {
+  display: none;
+  margin-top: 14px;
+}
+.upload-progress.active { display: block; }
+.progress-bar-outer {
+  width: 100%;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-bar-inner {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width .2s;
+}
+.progress-text {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* Upload result */
+.upload-result {
+  display: none;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+}
+.upload-result.active { display: block; }
+.upload-result.success {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid #bbf7d0;
+}
+.upload-result.error {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid #fecaca;
+}
+
+/* ── Upload wizard steps ───────────────────────────────────────────────── */
+.wizard-steps {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.wizard-step {
+  flex: 1;
+  text-align: center;
+  padding: 8px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.wizard-step:last-child { border-right: none; }
+.wizard-step.active {
+  background: var(--accent);
+  color: #fff;
+}
+.wizard-step.done {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.wizard-page { display: none; }
+.wizard-page.active { display: block; }
+
+.wizard-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.wizard-nav button {
+  flex: 1;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s;
+  background: var(--surface);
+  color: var(--text);
+}
+.wizard-nav button:hover { background: var(--bg); }
+.wizard-nav button.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.wizard-nav button.primary:hover { background: #1d4ed8; }
+
+/* ── Collapsible sections ──────────────────────────────────────────────── */
+.section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 6px;
+  border: none;
+  background: none;
+  width: 100%;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.section-toggle .chevron {
+  font-size: 10px;
+  transition: transform .15s;
+  color: var(--muted);
+}
+.section-toggle.collapsed .chevron { transform: rotate(-90deg); }
+.section-body { margin-bottom: 16px; }
+.section-body.collapsed { display: none; }
+.optional-tag {
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+/* ── Form grid ─────────────────────────────────────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+.req-star { color: var(--red); font-weight: 700; }
+
+/* ── Inline validation ─────────────────────────────────────────────────── */
+.field-error {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 3px;
+  display: none;
+}
+.field-error.visible { display: block; }
+.upload-field input.invalid,
+.upload-field select.invalid,
+.upload-field textarea.invalid {
+  border-color: var(--red);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 16px 24px;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+</style>
+<!-- STYLES_END -->
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-brand">
+    <img src="assets/logo.png" alt="CCL-Bench logo" class="header-logo">
+    <div>
+      <h1>CCL-Bench &mdash; Benchmark Results</h1>
+      <div class="tagline">Collective Communication &amp; LLM Performance Metrics</div>
+    </div>
+  </div>
+  <div class="gen-ts" id="gen-ts"></div>
+</header>
+
+<!-- ── About strip ──────────────────────────────────────────────────────────── -->
+<div class="about-strip">
+  <p>
+    CCL-Bench is a collaborative benchmarking project studying how distributed LLM workloads behave
+    across different hardware, frameworks, and communication libraries.
+    <!-- As models scale, a distributed implementation on hardware&nbsp;A with library&nbsp;X can behave
+    drastically differently from hardware&nbsp;B with library&nbsp;Y.
+    Each group collects traces and contributes analysis tools, which are then applied
+    cross-group &mdash; making the benchmark scalable without brute-force exploration.
+    Metrics include MFU, estimated memory bandwidth, step time, and more. -->
+  </p>
+  <!-- <p>
+    Contact: <a href="mailto:cclbench@gmail.com">CCL-Bench</a>
+  </p> -->
+</div>
+
+<!-- ── Stats strip ─────────────────────────────────────────────────────────── -->
+<div class="stats-strip" id="stats-strip">
+  <div class="stat"><strong>&hellip;</strong> workloads</div>
+</div>
+
+<!-- ── Toolbar ─────────────────────────────────────────────────────────────── -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input id="search" type="search" placeholder="Filter workloads, models, hardware…" autocomplete="off">
+  </div>
+  <span class="filter-count" id="filter-count"></span>
+  <div class="scroll-nav" style="margin-left:auto">
+    <button class="scroll-btn" onclick="scrollTable(-320)" title="Scroll table left">&#8592;</button>
+    <button class="scroll-btn" onclick="scrollTable(320)" title="Scroll table right">&#8594;</button>
+  </div>
+  <a href="leaderboard.html" class="upload-btn" style="background:#0f172a;border-color:#334155;text-decoration:none" title="Standard workload leaderboard">
+    &#127942; Leaderboard
+  </a>
+  <button class="upload-btn" onclick="openUploadPanel()" title="Upload trace files">
+    <span class="upload-icon">&#8679;</span> Upload Traces
+  </button>
+</div>
+
+<!-- ── Table ───────────────────────────────────────────────────────────────── -->
+<div class="table-outer" id="table-outer">
+  <table id="bench-table">
+    <thead id="bench-thead"></thead>
+    <tbody id="bench-tbody"></tbody>
+  </table>
+  <div id="empty-state" style="display:none"></div>
+</div>
+
+<!-- ── Upload Panel (slide-over) ────────────────────────────────────────────── -->
+<div class="upload-backdrop" id="upload-backdrop" onclick="closeUploadPanel()"></div>
+<div class="upload-panel" id="upload-panel">
+  <div class="upload-panel-hd">
+    <h2>&#8679; Upload Trace &amp; Workload Card</h2>
+    <button class="upload-panel-close" onclick="closeUploadPanel()" title="Close">&#10005;</button>
+  </div>
+  <div class="upload-panel-body">
+
+    <!-- Wizard step indicators -->
+    <div class="wizard-steps">
+      <div class="wizard-step active" data-step="0" onclick="goToStep(0)">① Contributor</div>
+      <div class="wizard-step" data-step="1" onclick="goToStep(1)">② Model &amp; Data</div>
+      <div class="wizard-step" data-step="2" onclick="goToStep(2)">③ Hardware</div>
+      <div class="wizard-step" data-step="3" onclick="goToStep(3)">④ Framework</div>
+      <div class="wizard-step" data-step="4" onclick="goToStep(4)">⑤ Files &amp; Upload</div>
+    </div>
+
+    <!-- ═══ STEP 0: Contributor Info ═══ -->
+    <div class="wizard-page active" id="wiz-page-0">
+      <div class="form-grid">
+        <div class="upload-field full">
+          <label>Workload Name <span class="req-star">*</span></label>
+          <input type="text" id="wl-name" placeholder="e.g. llama-3.1-8b-sglang-tp4-perlmutter-group6">
+          <div class="field-error" id="err-wl-name">Workload name is required</div>
+        </div>
+        <div class="upload-field">
+          <label>Contributor Name <span class="req-star">*</span></label>
+          <input type="text" id="wl-contributor" placeholder="Your name">
+          <div class="field-error" id="err-wl-contributor">Contributor name is required</div>
+        </div>
+        <div class="upload-field">
+          <label>Contact Email <span class="req-star">*</span></label>
+          <input type="email" id="wl-contact" placeholder="you@example.com">
+          <div class="field-error" id="err-wl-contact">Valid email is required</div>
+        </div>
+        <div class="upload-field full">
+          <label>Description <span class="optional-tag">(optional)</span></label>
+          <textarea id="wl-description" placeholder="Brief description of this workload run…"></textarea>
+        </div>
+        <div class="upload-field">
+          <label>HuggingFace URL <span class="optional-tag">(optional)</span></label>
+          <input type="url" id="wl-hf-url" placeholder="https://huggingface.co/…">
+        </div>
+        <div class="upload-field">
+          <label>Trace URL <span class="optional-tag">(optional)</span></label>
+          <input type="text" id="wl-trace-url" placeholder="Drive / S3 link or local path">
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <div></div>
+        <button class="primary" onclick="goToStep(1)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1: Model & Data ═══ -->
+    <div class="wizard-page" id="wiz-page-1">
+      <!-- Model (required) -->
+      <button class="section-toggle" onclick="toggleSection(this)">
+        Model <span class="chevron">▼</span>
+      </button>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Model Family <span class="req-star">*</span></label>
+            <input type="text" id="wl-model-family" placeholder="e.g. llama-3.1-8b">
+            <div class="field-error" id="err-wl-model-family">Model family is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Phase <span class="req-star">*</span></label>
+            <select id="wl-phase">
+              <option value="">— Select —</option>
+              <option value="training">Training</option>
+              <option value="inference">Inference</option>
+              <option value="serving">Serving</option>
+            </select>
+            <div class="field-error" id="err-wl-phase">Phase is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Precision</label>
+            <select id="wl-precision">
+              <option value="bf16">bf16</option>
+              <option value="fp32">fp32</option>
+              <option value="fp16">fp16</option>
+              <option value="int8">int8</option>
+              <option value="fp8">fp8</option>
+            </select>
+          </div>
+          <div class="upload-field">
+            <label>MoE</label>
+            <select id="wl-moe">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div class="upload-field">
+            <label>Granularity <span class="optional-tag">(optional)</span></label>
+            <select id="wl-granularity">
+              <option value="">— Select —</option>
+              <option value="model_fwd_bwd_pass">model_fwd_bwd_pass</option>
+              <option value="model_fwd">model_fwd</option>
+              <option value="layer">layer</option>
+              <option value="kernel">kernel</option>
+            </select>
+          </div>
+          <div class="upload-field">
+            <label>Epochs <span class="optional-tag">(optional)</span></label>
+            <input type="number" id="wl-epochs" placeholder="e.g. 1" min="0">
+          </div>
+          <div class="upload-field">
+            <label>Iterations <span class="optional-tag">(optional)</span></label>
+            <input type="number" id="wl-iteration" placeholder="e.g. 5" min="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Data (required) -->
+      <button class="section-toggle" onclick="toggleSection(this)">
+        Data <span class="chevron">▼</span>
+      </button>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Batch Size <span class="req-star">*</span></label>
+            <input type="number" id="wl-batch-size" placeholder="e.g. 4" min="1">
+            <div class="field-error" id="err-wl-batch-size">Batch size is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Sequence Length <span class="req-star">*</span></label>
+            <input type="number" id="wl-seq-len" placeholder="e.g. 8192" min="1">
+            <div class="field-error" id="err-wl-seq-len">Sequence length is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Dataset <span class="optional-tag">(optional)</span></label>
+            <input type="text" id="wl-dataset" placeholder="e.g. c4, wikitext, random">
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button onclick="goToStep(0)">← Back</button>
+        <button class="primary" onclick="goToStep(2)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: Hardware ═══ -->
+    <div class="wizard-page" id="wiz-page-2">
+      <button class="section-toggle" onclick="toggleSection(this)">
+        Accelerator <span class="chevron">▼</span>
+      </button>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Type <span class="req-star">*</span></label>
+            <select id="wl-hw-type">
+              <option value="">— Select —</option>
+              <option value="GPU">GPU</option>
+              <option value="TPU">TPU</option>
+            </select>
+            <div class="field-error" id="err-wl-hw-type">Hardware type is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Model <span class="req-star">*</span></label>
+            <input type="text" id="wl-hw-model" placeholder="e.g. nvidia_a100, tpu_v6e">
+            <div class="field-error" id="err-wl-hw-model">Hardware model is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Total Count <span class="req-star">*</span></label>
+            <input type="number" id="wl-hw-total" placeholder="e.g. 16" min="1">
+            <div class="field-error" id="err-wl-hw-total">Total count is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Per Node</label>
+            <input type="number" id="wl-hw-per-node" placeholder="e.g. 4" min="1">
+          </div>
+          <div class="upload-field">
+            <label>Driver Version <span class="optional-tag">(optional)</span></label>
+            <input type="text" id="wl-driver" placeholder="e.g. cuda_12.4, rocm_5.6">
+          </div>
+        </div>
+      </div>
+
+      <button class="section-toggle collapsed" onclick="toggleSection(this)">
+        Network Topology <span class="optional-tag">(optional)</span> <span class="chevron">▼</span>
+      </button>
+      <div class="section-body collapsed">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Topology</label>
+            <input type="text" id="wl-net-topo" placeholder="e.g. slingshot, fat-tree, torus">
+          </div>
+          <div class="upload-field">
+            <label>Scale-out BW (Gbps)</label>
+            <input type="number" id="wl-bw-scaleout" placeholder="e.g. 200">
+          </div>
+          <div class="upload-field">
+            <label>Scale-up BW (Gbps)</label>
+            <input type="number" id="wl-bw-scaleup" placeholder="e.g. 2400">
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button onclick="goToStep(1)">← Back</button>
+        <button class="primary" onclick="goToStep(3)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: Framework & Parallelism ═══ -->
+    <div class="wizard-page" id="wiz-page-3">
+      <button class="section-toggle" onclick="toggleSection(this)">
+        Framework <span class="chevron">▼</span>
+      </button>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Framework <span class="req-star">*</span></label>
+            <input type="text" id="wl-framework" placeholder="e.g. torchtitan, sglang, vllm, deepspeed">
+            <div class="field-error" id="err-wl-framework">Framework is required</div>
+          </div>
+          <div class="upload-field">
+            <label>Compiler <span class="optional-tag">(optional)</span></label>
+            <input type="text" id="wl-compiler" placeholder="e.g. plain_pytorch, xla, triton">
+          </div>
+        </div>
+      </div>
+
+      <button class="section-toggle" onclick="toggleSection(this)">
+        Parallelism <span class="chevron">▼</span>
+      </button>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>TP</label>
+            <input type="number" id="wl-tp" placeholder="1" min="1" value="1">
+          </div>
+          <div class="upload-field">
+            <label>PP</label>
+            <input type="number" id="wl-pp" placeholder="1" min="1" value="1">
+          </div>
+          <div class="upload-field">
+            <label>DP Replicate</label>
+            <input type="number" id="wl-dp-rep" placeholder="1" min="1" value="1">
+          </div>
+          <div class="upload-field">
+            <label>DP Shard</label>
+            <input type="number" id="wl-dp-shard" placeholder="1" min="1" value="1">
+          </div>
+          <div class="upload-field">
+            <label>EP <span class="optional-tag">(optional)</span></label>
+            <input type="number" id="wl-ep" placeholder="1" min="1">
+          </div>
+          <div class="upload-field">
+            <label>CP <span class="optional-tag">(optional)</span></label>
+            <input type="number" id="wl-cp" placeholder="1" min="1">
+          </div>
+          <div class="upload-field">
+            <label>PP Microbatch <span class="optional-tag">(optional)</span></label>
+            <input type="number" id="wl-pp-mb" placeholder="1" min="1">
+          </div>
+        </div>
+      </div>
+
+      <button class="section-toggle collapsed" onclick="toggleSection(this)">
+        Communication <span class="optional-tag">(optional)</span> <span class="chevron">▼</span>
+      </button>
+      <div class="section-body collapsed">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Comm Library</label>
+            <input type="text" id="wl-comm-lib" placeholder="e.g. NCCL, Gloo, xla">
+          </div>
+          <div class="upload-field">
+            <label>Comm Library Version</label>
+            <input type="text" id="wl-comm-ver" placeholder="e.g. 2.28.3">
+          </div>
+          <div class="upload-field full">
+            <label>Protocols <span style="font-weight:400;text-transform:none;letter-spacing:0">(comma-separated)</span></label>
+            <input type="text" id="wl-protocols" placeholder="e.g. rocev2, p2p, nvlink">
+          </div>
+          <div class="upload-field full">
+            <label>Comm Env Vars <span style="font-weight:400;text-transform:none;letter-spacing:0">(KEY=VALUE, comma-separated)</span></label>
+            <input type="text" id="wl-comm-env" placeholder="e.g. NCCL_IB_QPS_PER_CONNECTION=8, NCCL_NET_GDR_LEVEL=5">
+          </div>
+        </div>
+      </div>
+
+      <button class="section-toggle collapsed" onclick="toggleSection(this)">
+        Metric Source <span class="optional-tag">(optional)</span> <span class="chevron">▼</span>
+      </button>
+      <div class="section-body collapsed">
+        <div class="form-grid">
+          <div class="upload-field">
+            <label>Trace Types <span style="font-weight:400;text-transform:none;letter-spacing:0">(comma-separated)</span></label>
+            <input type="text" id="wl-trace-types" placeholder="e.g. nsys, json, tpu_profiler">
+          </div>
+          <div class="upload-field">
+            <label>Metric-specific Traces <span style="font-weight:400;text-transform:none;letter-spacing:0">(comma-separated)</span></label>
+            <input type="text" id="wl-metric-traces" placeholder="e.g. nsys_sqlite, memory_trace">
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button onclick="goToStep(2)">← Back</button>
+        <button class="primary" onclick="goToStep(4)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 4: Files & Upload ═══ -->
+    <div class="wizard-page" id="wiz-page-4">
+      <div class="drop-zone" id="drop-zone">
+        <div class="dz-icon">&#128230;</div>
+        <div class="dz-text">Drag &amp; drop trace files here</div>
+        <div class="dz-sub">or <span class="dz-browse" id="dz-browse">browse your computer</span></div>
+        <div class="dz-sub" style="margin-top:6px;font-size:11px;color:#94a3b8">
+          .nsys-rep, .json, .tar, .gz, .tgz, .zip, .bz2, .xz, .zst &nbsp;·&nbsp; Max 500 MB
+        </div>
+        <input type="file" id="file-input" multiple hidden>
+      </div>
+
+      <div class="file-list" id="file-list"></div>
+
+<button class="upload-submit" id="upload-submit" onclick="submitUpload()" disabled>
+        Upload Trace Files &amp; Generate Workload Card
+      </button>
+
+      <div class="upload-progress" id="upload-progress">
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progress-bar"></div>
+        </div>
+        <div class="progress-text" id="progress-text">Uploading…</div>
+      </div>
+
+      <div class="upload-result" id="upload-result"></div>
+
+      <div class="wizard-nav" style="margin-top:12px">
+        <button onclick="goToStep(3)">← Back</button>
+        <div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Compare bar ─────────────────────────────────────────────────────────── -->
+<div class="compare-bar" id="compare-bar">
+  <div style="min-width:0">
+    <div class="compare-bar-label" id="compare-bar-label">Select 1 more to compare</div>
+    <div class="compare-bar-names" id="compare-bar-names"></div>
+  </div>
+  <div class="compare-bar-actions">
+    <button class="compare-action-btn primary" id="compare-go-btn" onclick="showCompare()" style="display:none">Compare &#8596;</button>
+    <button class="compare-action-btn secondary" onclick="clearSelection()">Clear</button>
+  </div>
+</div>
+
+<!-- ── Modal ───────────────────────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="onBackdropClick(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-hd">
+      <h2 id="modal-title"></h2>
+      <button class="modal-close" onclick="closeModal()" title="Close">&#10005;</button>
+    </div>
+    <div class="modal-bd" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<footer>
+  CCL-Bench &mdash; Collaborative LLM Systems Benchmark &nbsp;|&nbsp;
+  <!-- Contact: <a href="mailto:cclbench@gmail.com">CCL-Bench</a>
+  &nbsp;|&nbsp;
+  Results generated by <code>python website/generate_data.py</code> -->
+</footer>
+
+<script src="website/data.js"></script>
+
+<script>
+'use strict';
+
+// ── State ────────────────────────────────────────────────────────────────────
+const S = {
+  data:     null,
+  cols:     [],
+  rows:     [],      // all rows, augmented with __idx
+  visible:  [],      // after filter + sort
+  sort:     { col: null, dir: 1 },
+  filter:   '',
+  selected: new Set(),  // up to 2 row __idx values for compare
+};
+
+// ── Metadata columns shown left of the metric columns ────────────────────────
+const META_COLS = [
+  // key '__select' is the checkbox column; '__info' is the info-button column
+  { key: '__select',       label: '',            group: 'Workload',     sortable: false },
+  { key: '__info',         label: '',            group: 'Workload',     sortable: false },
+  { key: 'workload_name',  label: 'Workload',    group: 'Workload',     sortable: true  },
+  { key: 'model_family',   label: 'Model',       group: 'Model',        sortable: true  },
+  { key: 'phase',          label: 'Phase',       group: 'Model',        sortable: true  },
+  { key: 'precision',      label: 'Precision',   group: 'Model',        sortable: true  },
+  { key: 'hardware_type',  label: 'HW Type',     group: 'Hardware',     sortable: true  },
+  { key: 'hardware_model', label: 'HW Model',    group: 'Hardware',     sortable: true  },
+  { key: '__accel',        label: 'Accelerators',group: 'Hardware',     sortable: true, numeric: true },
+  { key: 'framework',      label: 'Framework',   group: 'Config',       sortable: true  },
+  { key: 'compiler',      label: 'Compiler',    group: 'Config',       sortable: true  },
+  { key: 'tp',             label: 'TP',          group: 'Config',       sortable: true, numeric: true },
+  { key: 'pp',             label: 'PP',          group: 'Config',       sortable: true, numeric: true },
+  { key: 'dp_replicate',   label: 'DP',          group: 'Config',       sortable: true, numeric: true },
+  { key: 'dp_shard',       label: 'DP Shard',    group: 'Config',       sortable: true, numeric: true },
+  { key: 'ep',             label: 'EP',          group: 'Config',       sortable: true, numeric: true },
+  { key: 'comm_library',   label: 'Comm',        group: 'Config',       sortable: true },
+  { key: 'batch_size',     label: 'Batch',       group: 'Data',         sortable: true, numeric: true },
+  { key: 'seq_len',        label: 'Seq Len',     group: 'Data',         sortable: true, numeric: true },
+];
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmt(v) {
+  if (v === null || v === undefined || v === '') return '<span style="color:var(--muted)">—</span>';
+  if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+  return esc(v);
+}
+function fmtDate(iso) {
+  try {
+    return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+  } catch { return iso; }
+}
+
+function isInferenceMeta(m) {
+  return String(m && m.phase || '').toLowerCase() === 'inference';
+}
+
+function dataLengthKvs(m) {
+  if (!isInferenceMeta(m)) return [['Seq Length', m.seq_len]];
+  return [
+    ['Input Length',  m.input_len || m.seq_len],
+    ['Output Length', m.output_len],
+  ];
+}
+
+// ── Cell renderers ────────────────────────────────────────────────────────────
+function cellInfo(row) {
+  return `<button class="info-btn" onclick="showModal(${row.__idx})" title="View workload details">i</button>`;
+}
+
+function cellWorkload(row) {
+  const name = row.metadata.workload_name || '';
+  const url  = row.metadata.hf_url;
+  const link = url
+    ? `<a class="wl-link" href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>`
+    : esc(name);
+  return `<div class="wl-cell"><span class="wl-name">${link}</span></div>`;
+}
+
+function cellPhase(row) {
+  const p = row.metadata.phase || '';
+  if (!p) return fmt('');
+  const cls = p === 'inference' ? 'b-inference' : p === 'training' ? 'b-training' : p === 'serving' ? 'b-serving' : '';
+  return `<span class="badge ${cls}">${esc(p)}</span>`;
+}
+
+function cellHWType(row) {
+  const t = row.metadata.hardware_type || '';
+  if (!t) return fmt('');
+  const cls = t.toLowerCase() === 'tpu' ? 'b-tpu' : 'b-gpu';
+  return `<span class="badge ${cls}">${esc(t)}</span>`;
+}
+
+function cellModel(row) {
+  const m   = row.metadata.model_family || '';
+  const moe = row.metadata.moe ? '<span class="badge b-moe">MoE</span>' : '';
+  return `<span>${esc(m)}${moe}</span>`;
+}
+
+function cellAccel(row) {
+  const total = row.metadata.total_count;
+  const perNode = row.metadata.count_per_node;
+  if (!total && total !== 0) return fmt('');
+  const nodes = (perNode && perNode > 0) ? Math.round(total / perNode) : null;
+  const nodeStr = nodes != null ? `<span style="color:var(--muted);font-size:.8em"> (${nodes} nodes)</span>` : '';
+  return `<span>${esc(total)}${nodeStr}</span>`;
+}
+
+function metricPill(val, info) {
+  if (val === null || val === undefined) {
+    return '<span class="metric-pill mp-na">N/A</span>';
+  }
+  if (typeof val !== 'number') {
+    return `<span class="metric-pill mp-na">${esc(String(val))}</span>`;
+  }
+  const thr    = (info && info.thresholds) || { high: 50, mid: 25 };
+  const higher = info && info.higher_is_better === false ? false : true;
+  const unit   = (info && info.unit) || '';
+
+  let cls;
+  if (higher) {
+    cls = val >= thr.high ? 'mp-high' : val >= thr.mid ? 'mp-mid' : 'mp-low';
+  } else {
+    cls = val <= thr.mid ? 'mp-high' : val <= thr.high ? 'mp-mid' : 'mp-low';
+  }
+  let formatted;
+  if (val !== 0 && Math.abs(val) < 0.01) {
+    formatted = val.toExponential(3);
+  } else {
+    formatted = val.toFixed(2);
+  }
+  const display = formatted + (unit ? '\u202f' + unit : '');
+  return `<span class="metric-pill ${cls}">${esc(display)}</span>`;
+}
+
+// ── Build full column list ────────────────────────────────────────────────────
+function buildCols(allMetrics, metricInfo, metricCategories) {
+  const cats = metricCategories || [];
+  const catOrder  = {};
+  const catLabels = {};
+  cats.forEach((c, i) => { catOrder[c.id] = i; catLabels[c.id] = c.label; });
+
+  // Sort metrics by category order, then alphabetically within each category
+  // Only show metrics that have an entry in metricInfo (acts as the display allow-list)
+  const sorted = [...allMetrics].filter(m => metricInfo[m]).sort((a, b) => {
+    const ca = (metricInfo[a] && metricInfo[a].category) || '';
+    const cb = (metricInfo[b] && metricInfo[b].category) || '';
+    const oa = catOrder[ca] ?? 999;
+    const ob = catOrder[cb] ?? 999;
+    if (oa !== ob) return oa - ob;
+    return a.localeCompare(b);
+  });
+
+  const mCols = sorted.map(m => {
+    const info  = metricInfo[m] || {};
+    const catId = info.category || '';
+    return {
+      key:        '__m__' + m,
+      label:      info.label || m,
+      group:      catLabels[catId] || 'Metrics',
+      sortable:   true,
+      numeric:    true,
+      isMetric:   true,
+      metricName: m,
+      metricInfo: info,
+    };
+  });
+  return [...META_COLS, ...mCols];
+}
+
+// ── Filter & sort ─────────────────────────────────────────────────────────────
+function applyFilterSort() {
+  const q = S.filter.toLowerCase();
+  let rows = S.rows;
+
+  if (q) {
+    rows = rows.filter(r =>
+      Object.values(r.metadata).some(v => String(v ?? '').toLowerCase().includes(q)) ||
+      Object.values(r.metrics).some(v  => String(v ?? '').toLowerCase().includes(q))
+    );
+  }
+
+  if (S.sort.col) {
+    const { col, dir } = S.sort;
+    rows = [...rows].sort((a, b) => {
+      let va, vb;
+      if (col.isMetric) {
+        va = a.metrics[col.metricName] ?? null;
+        vb = b.metrics[col.metricName] ?? null;
+      } else if (col.key === '__accel') {
+        va = a.metadata.total_count ?? null;
+        vb = b.metadata.total_count ?? null;
+      } else if (col.key === 'dp_replicate') {
+        va = a.metadata.dp_replicate ?? null;
+        vb = b.metadata.dp_replicate ?? null;
+      } else {
+        va = a.metadata[col.key] ?? null;
+        vb = b.metadata[col.key] ?? null;
+      }
+      if (va === null && vb === null) return 0;
+      if (va === null) return 1;
+      if (vb === null) return -1;
+      if (typeof va === 'number' && typeof vb === 'number') return dir * (va - vb);
+      return dir * String(va).localeCompare(String(vb), undefined, { numeric: true });
+    });
+  }
+
+  S.visible = rows;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderAll() {
+  applyFilterSort();
+  renderHead();
+  renderBody();
+  updateCount();
+}
+
+function renderHead() {
+  // Build group-span map
+  const groups = [];
+  let last = null;
+  S.cols.forEach(col => {
+    const g = col.group || '';
+    if (g === last) { groups[groups.length - 1].span++; }
+    else            { groups.push({ label: g, span: 1 }); last = g; }
+  });
+
+  // First group (Workload) spans __select + __info + workload_name — pin it
+  const groupCells = groups.map((g, gi) => {
+    const isFirst = gi === 0;
+    const cls = [g.label === 'Workload' ? 'g-workload' : '', isFirst ? 'sticky-col sticky-col-1' : ''].join(' ').trim();
+    return `<th class="${cls}" colspan="${g.span}">${g.label ? esc(g.label) : ''}</th>`;
+  }).join('');
+
+  const STICKY = { '__select': 'sticky-col sticky-col-1', '__info': 'sticky-col sticky-col-2', 'workload_name': 'sticky-col sticky-col-3' };
+
+  const sc = S.sort.col;
+  const colCells = S.cols.map(col => {
+    const stickyClass = STICKY[col.key] || '';
+    if (col.key === '__select') {
+      return `<th class="no-sort ${stickyClass}" style="width:32px;text-align:center" title="Select rows to compare (max 5)">&#9745;</th>`;
+    }
+    if (!col.sortable) return `<th class="no-sort ${stickyClass}" style="width:32px"></th>`;
+    const active  = sc && sc.key === col.key;
+    const sortCls = active ? (S.sort.dir === 1 ? 'sorted-asc' : 'sorted-desc') : '';
+    const mCls    = col.isMetric ? 'th-metric' : '';
+    if (col.isMetric && col.metricInfo) {
+      const dir     = col.metricInfo.higher_is_better ? ' \u2191' : ' \u2193';
+      const infoBtn = `<span class="th-info-btn" onclick="event.stopPropagation();showMetricInfo('${col.metricName}')" title="View metric details">\u24d8</span>`;
+      return `<th class="${sortCls} ${mCls} ${stickyClass}" onclick="onSort('${col.key}')">${esc(col.label)}${dir}${infoBtn}</th>`;
+    }
+    return `<th class="${sortCls} ${mCls} ${stickyClass}" onclick="onSort('${col.key}')">${esc(col.label)}</th>`;
+  }).join('');
+
+  document.getElementById('bench-thead').innerHTML =
+    `<tr class="th-group-row">${groupCells}</tr><tr>${colCells}</tr>`;
+}
+
+function renderBody() {
+  const tbody = document.getElementById('bench-tbody');
+  const empty = document.getElementById('empty-state');
+
+  if (!S.visible.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    empty.innerHTML = `
+      <div class="empty-state">
+        <div class="es-icon">&#128269;</div>
+        <h2>No matching workloads</h2>
+        <p>Try a different search term, or clear the filter.</p>
+      </div>`;
+    return;
+  }
+  empty.style.display = 'none';
+
+  const PHASE_ORDER = ['training', 'inference', 'serving'];
+  const PHASE_BADGE = { training: 'b-training', inference: 'b-inference', serving: 'b-serving' };
+  const numCols = S.cols.length;
+
+  // Group visible rows by phase
+  const groups = {};
+  const ungrouped = [];
+  S.visible.forEach(row => {
+    const p = (row.metadata.phase || '').toLowerCase();
+    if (PHASE_ORDER.includes(p)) {
+      (groups[p] = groups[p] || []).push(row);
+    } else {
+      ungrouped.push(row);
+    }
+  });
+
+  const renderRow = row => {
+    const idx        = row.__idx;
+    const isSelected = S.selected.has(idx);
+    const canSelect  = isSelected || S.selected.size < 5;
+    const tds = S.cols.map(col => {
+      if (col.key === '__select') {
+        const chk = isSelected ? ' checked' : '';
+        const dis = canSelect  ? '' : ' disabled';
+        return `<td class="sticky-col sticky-col-1" style="width:32px;padding:4px 8px;text-align:center"><input type="checkbox" class="row-check"${chk}${dis} onchange="toggleSelect(${idx})" title="Select to compare"></td>`;
+      }
+      if (col.key === '__info')        return `<td class="sticky-col sticky-col-2" style="width:32px;padding:4px 8px">${cellInfo(row)}</td>`;
+      if (col.key === 'workload_name') return `<td class="sticky-col sticky-col-3">${cellWorkload(row)}</td>`;
+      if (col.key === 'phase')         return `<td>${cellPhase(row)}</td>`;
+      if (col.key === 'hardware_type') return `<td>${cellHWType(row)}</td>`;
+      if (col.key === 'model_family')  return `<td>${cellModel(row)}</td>`;
+      if (col.key === '__accel')       return `<td>${cellAccel(row)}</td>`;
+      if (col.isMetric) {
+        const v = row.metrics[col.metricName];
+        return `<td class="td-metric">${metricPill(v, col.metricInfo)}</td>`;
+      }
+      return `<td>${fmt(row.metadata[col.key])}</td>`;
+    }).join('');
+    return `<tr${isSelected ? ' class="row-selected"' : ''}>${tds}</tr>`;
+  };
+
+  const renderSectionHeader = (phase, count) => {
+    const cls = PHASE_BADGE[phase] || '';
+    const label = phase.charAt(0).toUpperCase() + phase.slice(1);
+    return `<tr class="phase-section-row">
+      <td colspan="${numCols}">
+        <span class="phase-section-label">
+          <span class="badge ${cls}">${esc(label)}</span>
+          <span class="phase-section-count">${count} workload${count !== 1 ? 's' : ''}</span>
+        </span>
+      </td>
+    </tr>`;
+  };
+
+  const parts = [];
+  for (const phase of PHASE_ORDER) {
+    const rows = groups[phase];
+    if (!rows || !rows.length) continue;
+    parts.push(renderSectionHeader(phase, rows.length));
+    rows.forEach(row => parts.push(renderRow(row)));
+  }
+  if (ungrouped.length) {
+    parts.push(renderSectionHeader('other', ungrouped.length));
+    ungrouped.forEach(row => parts.push(renderRow(row)));
+  }
+
+  tbody.innerHTML = parts.join('');
+}
+
+function updateCount() {
+  const total = S.rows.length;
+  const shown = S.visible.length;
+  document.getElementById('filter-count').textContent =
+    S.filter ? `Showing ${shown} of ${total} workloads` : '';
+}
+
+// ── Sort ──────────────────────────────────────────────────────────────────────
+function onSort(key) {
+  const col = S.cols.find(c => c.key === key);
+  if (!col || !col.sortable) return;
+  if (S.sort.col && S.sort.col.key === key) {
+    S.sort.dir *= -1;
+  } else {
+    S.sort.col = col;
+    S.sort.dir = 1;
+  }
+  renderAll();
+}
+
+// ── Search ────────────────────────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', e => {
+  S.filter = e.target.value.trim();
+  renderAll();
+});
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function showModal(idx) {
+  const row = S.rows[idx];
+  if (!row) return;
+  const m  = row.metadata;
+  const mi = S.data.metric_info || {};
+
+  document.getElementById('modal-title').textContent = m.workload_name || '';
+
+  const parts = [];
+
+  // Description
+  if (m.description) {
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Description</div>
+        <div class="m-desc">${esc(m.description)}</div>
+      </div>`);
+  }
+
+  // Model & Data
+  const modelKvs = [
+    ['HuggingFace URL', m.hf_url ? `<a href="${esc(m.hf_url)}" target="_blank" rel="noopener">${esc(m.hf_url)}</a>` : null],
+    ['Trace URL',       m.trace_url ? `<a href="${esc(m.trace_url)}" target="_blank" rel="noopener">${esc(m.trace_url)}</a>` : null],
+    ['Model Family',    m.model_family],
+    ['Phase',           m.phase],
+    ['Precision',       m.precision],
+    ['MoE',             m.moe != null ? (m.moe ? 'Yes' : 'No') : null],
+    ['Granularity',     m.granularity],
+    ['Epochs',          m.epochs],
+    ['Iterations',      m.iteration],
+    ['Batch Size',      m.batch_size],
+    ...dataLengthKvs(m),
+    ['Dataset',         m.dataset],
+  ].filter(([, v]) => v != null && v !== '');
+
+  if (modelKvs.length) {
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Model &amp; Data</div>
+        <div class="kv-grid">
+          ${modelKvs.map(([k, v]) =>
+            `<span class="kv-k">${esc(k)}</span><span class="kv-v">${v}</span>`
+          ).join('')}
+        </div>
+      </div>`);
+  }
+
+  // Hardware
+  const totalCount = m.total_count;
+  const perNode    = m.count_per_node;
+  const numNodes   = (totalCount && perNode && perNode > 0) ? Math.round(totalCount / perNode) : null;
+  const hwKvs = [
+    ['Hardware Type',       m.hardware_type],
+    ['Hardware Model',      m.hardware_model],
+    ['Total Accelerators',  totalCount],
+    ['Accelerators / Node', perNode],
+    ['Num Nodes',           numNodes],
+    ['Driver Version',      m.driver_version],
+    ['Network Topology',    m.network_topology],
+    ['Scale-out BW (Gbps)', m.bandwidth_scaleout],
+    ['Scale-up BW (Gbps)',  m.bandwidth_scaleup],
+  ].filter(([, v]) => v != null && v !== '');
+
+  if (hwKvs.length) {
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Hardware</div>
+        <div class="kv-grid">
+          ${hwKvs.map(([k, v]) =>
+            `<span class="kv-k">${esc(k)}</span><span class="kv-v">${fmt(v)}</span>`
+          ).join('')}
+        </div>
+      </div>`);
+  }
+
+  // Framework & Parallelism
+  const fwKvs = [
+    ['Framework',  m.framework],
+    ['Compiler',   m.compiler],
+    ['TP',         m.tp],
+    ['PP',         m.pp],
+    ['PP Microbatch Size', m.pp_mb],
+    ['DP Replicate', m.dp_replicate],
+    ['DP Shard',   m.dp_shard],
+    ['EP',         m.ep],
+    ['CP',         m.cp],
+  ].filter(([, v]) => v != null && v !== '');
+
+  if (fwKvs.length) {
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Framework &amp; Parallelism</div>
+        <div class="kv-grid">
+          ${fwKvs.map(([k, v]) =>
+            `<span class="kv-k">${esc(k)}</span><span class="kv-v">${fmt(v)}</span>`
+          ).join('')}
+        </div>
+      </div>`);
+  }
+
+  // Communication
+  const commParts = [];
+  const commKvs = [
+    ['Comm Library',         m.comm_library],
+    ['Comm Library Version', m.comm_library_ver],
+  ].filter(([, v]) => v != null && v !== '');
+  if (commKvs.length) {
+    commParts.push(`<div class="kv-grid">${commKvs.map(([k, v]) =>
+      `<span class="kv-k">${esc(k)}</span><span class="kv-v">${fmt(v)}</span>`
+    ).join('')}</div>`);
+  }
+  if (m.protocol_selection && m.protocol_selection.length) {
+    commParts.push(`<div class="kv-grid">
+      <span class="kv-k">Protocols</span>
+      <span class="kv-v">${m.protocol_selection.map(p => `<span class="badge">${esc(p)}</span>`).join(' ')}</span>
+    </div>`);
+  }
+  if (m.comm_env && Object.keys(m.comm_env).length) {
+    const envRows = Object.entries(m.comm_env).map(([k, v]) =>
+      `<span class="kv-k" style="padding-left:1em">${esc(k)}</span><span class="kv-v">${fmt(v)}</span>`
+    ).join('');
+    commParts.push(`<div class="kv-grid">
+      <span class="kv-k">Env Vars</span><span class="kv-v"></span>
+      ${envRows}
+    </div>`);
+  }
+  if (commParts.length) {
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Communication</div>
+        ${commParts.join('')}
+      </div>`);
+  }
+
+  // Metric source
+  const msParts = [];
+  if (m.trace_types && m.trace_types.length) {
+    msParts.push(`<div class="kv-grid">
+      <span class="kv-k">Trace Types</span>
+      <span class="kv-v">${m.trace_types.map(t => `<span class="badge">${esc(t)}</span>`).join(' ')}</span>
+    </div>`);
+  }
+  if (m.metric_traces && m.metric_traces.length) {
+    msParts.push(`<div class="kv-grid">
+      <span class="kv-k">Metric Traces</span>
+      <span class="kv-v">${m.metric_traces.map(t => `<span class="badge">${esc(t)}</span>`).join(' ')}</span>
+    </div>`);
+  }
+  if (msParts.length) {
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Metric Source</div>
+        ${msParts.join('')}
+      </div>`);
+  }
+
+  // Metrics — grouped by category
+  const metricEntries = Object.entries(row.metrics);
+  if (metricEntries.length) {
+    const cats = S.data.metric_categories || [];
+    const catOrder  = {};
+    const catLabels = {};
+    cats.forEach((c, i) => { catOrder[c.id] = i; catLabels[c.id] = c.label; });
+
+    const byCat = {};
+    const noCat = [];
+    metricEntries.forEach(([name, val]) => {
+      const cat = (mi[name] && mi[name].category) || '';
+      if (cat) { (byCat[cat] = byCat[cat] || []).push([name, val]); }
+      else      { noCat.push([name, val]); }
+    });
+
+    const renderMetricRow = ([name, val]) => {
+      const info  = mi[name] || {};
+      const label = info.label || name;
+      const desc  = info.description || '';
+      return `
+        <div class="metric-row">
+          <div>
+            <div class="mr-label">${esc(label)}</div>
+            ${desc ? `<div class="mr-desc">${esc(desc)}</div>` : ''}
+          </div>
+          ${metricPill(val, info)}
+        </div>`;
+    };
+
+    const sections = [];
+    for (const catDef of cats) {
+      const entries = byCat[catDef.id];
+      if (!entries || !entries.length) continue;
+      sections.push(
+        `<div class="m-cat-label">${esc(catDef.label)}</div>` +
+        entries.map(renderMetricRow).join('')
+      );
+    }
+    if (noCat.length) { sections.push(noCat.map(renderMetricRow).join('')); }
+
+    parts.push(`
+      <div class="m-section">
+        <div class="m-title">Metric Results</div>
+        ${sections.join('')}
+      </div>`);
+  }
+
+  document.getElementById('modal-body').innerHTML = parts.join('');
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.getElementById('modal-box').classList.remove('modal-wide');
+}
+
+function showMetricInfo(name) {
+  const mi   = (S.data && S.data.metric_info) || {};
+  const cats = (S.data && S.data.metric_categories) || [];
+  const catLabels = {};
+  cats.forEach(c => { catLabels[c.id] = c.label; });
+  const info = mi[name] || {};
+  document.getElementById('modal-title').textContent = info.label || name;
+  const dir = info.higher_is_better != null
+    ? (info.higher_is_better ? 'Higher is better \u2191' : 'Lower is better \u2193') : '';
+  const kvs = [
+    ['Description', info.description],
+    ['Unit',        info.unit],
+    ['Direction',   dir],
+    ['Category',    catLabels[info.category] || info.category],
+  ].filter(([, v]) => v);
+  document.getElementById('modal-body').innerHTML = `
+    <div class="m-section">
+      <div class="kv-grid">
+        ${kvs.map(([k, v]) =>
+          `<span class="kv-k">${esc(k)}</span><span class="kv-v">${esc(v)}</span>`
+        ).join('')}
+      </div>
+    </div>`;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function onBackdropClick(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); return; }
+  // Arrow keys scroll the table — skip when focus is in an input/textarea
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (e.key === 'ArrowLeft')  { scrollTable(-320); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { scrollTable(320);  e.preventDefault(); }
+});
+
+// ── Select & Compare ──────────────────────────────────────────────────────────
+function toggleSelect(idx) {
+  if (S.selected.has(idx)) {
+    S.selected.delete(idx);
+  } else {
+    if (S.selected.size >= 5) return;
+    S.selected.add(idx);
+  }
+  renderBody();
+  updateCompareBar();
+}
+
+function clearSelection() {
+  S.selected.clear();
+  renderBody();
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  const bar   = document.getElementById('compare-bar');
+  const count = S.selected.size;
+  if (count === 0) { bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+
+  const names = [...S.selected].map(i => {
+    const r = S.rows[i];
+    return r ? (r.metadata.workload_name || `#${i}`) : `#${i}`;
+  });
+  document.getElementById('compare-bar-names').textContent = names.join('  vs.  ');
+  const remaining = Math.max(0, 2 - count);
+  document.getElementById('compare-bar-label').textContent =
+    count >= 2
+      ? `${count} selected — ready to compare:`
+      : `Select ${remaining} more to compare:`;
+  document.getElementById('compare-go-btn').style.display = count >= 2 ? '' : 'none';
+}
+
+function showCompare() {
+  const idxs = [...S.selected];
+  if (idxs.length < 2) return;
+  const rows = idxs.map(i => S.rows[i]);
+  const n    = rows.length;
+  const mi   = (S.data && S.data.metric_info) || {};
+
+  document.getElementById('modal-box').classList.add('modal-wide');
+
+  // Title: "A  vs  B  vs  C …"
+  const titleParts = rows.map(r => `<span style="color:var(--accent);font-family:ui-monospace,monospace">${esc(r.metadata.workload_name||'?')}</span>`);
+  document.getElementById('modal-title').innerHTML =
+    `<span class="modal-title-compare">${titleParts.join('<span style="color:var(--muted);font-weight:400;font-size:12px;margin:0 5px">vs</span>')}</span>`;
+
+  const hdCells = rows.map(r => `<th class="cmp-val-hd">${esc(r.metadata.workload_name||'?')}</th>`).join('');
+  const colspanAll = n + 1; // label col + N value cols
+
+  const parts = [];
+
+  // ── Config comparison ──
+  const metaFields = [
+    ['Model Family',   r => r.metadata.model_family],
+    ['Phase',          r => r.metadata.phase],
+    ['Precision',      r => r.metadata.precision],
+    ['HW Type',        r => r.metadata.hardware_type],
+    ['HW Model',       r => r.metadata.hardware_model],
+    ['Accelerators',   r => r.metadata.total_count],
+    ['Framework',      r => r.metadata.framework],
+    ['Compiler',       r => r.metadata.compiler],
+    ['TP',             r => r.metadata.tp],
+    ['PP',             r => r.metadata.pp],
+    ['DP',             r => r.metadata.dp_replicate],
+    ['DP Shard',       r => r.metadata.dp_shard],
+    ['EP',             r => r.metadata.ep],
+    ['Comm Library',   r => r.metadata.comm_library],
+    ['Batch Size',     r => r.metadata.batch_size],
+    ['Seq Length',     r => isInferenceMeta(r.metadata) ? null : r.metadata.seq_len],
+    ['Input Length',   r => isInferenceMeta(r.metadata) ? (r.metadata.input_len || r.metadata.seq_len) : null],
+    ['Output Length',  r => isInferenceMeta(r.metadata) ? r.metadata.output_len : null],
+  ].filter(([, fn]) => rows.some(r => fn(r) != null));
+
+  const cfgRows = metaFields.map(([label, fn]) => {
+    const vals  = rows.map(fn);
+    const first = String(vals[0] ?? '');
+    const diff  = vals.some(v => String(v ?? '') !== first);
+    const cells = vals.map(v => `<td class="cmp-val">${fmt(v)}</td>`).join('');
+    return `<tr class="${diff ? 'cmp-diff' : ''}"><td class="cmp-label">${esc(label)}</td>${cells}</tr>`;
+  }).join('');
+
+  parts.push(`<div class="m-section">
+    <div class="m-title">Configuration</div>
+    <table class="cmp-table">
+      <thead><tr><th class="cmp-label-hd"></th>${hdCells}</tr></thead>
+      <tbody>${cfgRows}</tbody>
+    </table>
+  </div>`);
+
+  // ── Metrics comparison ──
+  const cats     = (S.data && S.data.metric_categories) || [];
+  const catOrder = {}; const catLabels = {};
+  cats.forEach((c, i) => { catOrder[c.id] = i; catLabels[c.id] = c.label; });
+
+  const allKeys = [...new Set(rows.flatMap(r => Object.keys(r.metrics)))]
+    .filter(m => mi[m])
+    .sort((a, b) => {
+      const oa = catOrder[(mi[a]&&mi[a].category)||''] ?? 999;
+      const ob = catOrder[(mi[b]&&mi[b].category)||''] ?? 999;
+      return oa !== ob ? oa - ob : a.localeCompare(b);
+    });
+
+  if (allKeys.length) {
+    const byCat = {}; const noCat = [];
+    allKeys.forEach(m => {
+      const cat = (mi[m]&&mi[m].category)||'';
+      if (cat) { (byCat[cat] = byCat[cat]||[]).push(m); }
+      else      { noCat.push(m); }
+    });
+
+    const renderMetricSection = (metricsArr) => metricsArr.map(m => {
+      const info  = mi[m]||{};
+      const cells = rows.map(r => `<td class="cmp-val cmp-metric">${metricPill(r.metrics[m], info)}</td>`).join('');
+      return `<tr><td class="cmp-label">${esc(info.label||m)}</td>${cells}</tr>`;
+    }).join('');
+
+    const sections = [];
+    for (const catDef of cats) {
+      const arr = byCat[catDef.id];
+      if (!arr||!arr.length) continue;
+      sections.push(
+        `<tr><td colspan="${colspanAll}" style="background:var(--bg);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);padding:6px 10px 3px">${esc(catDef.label)}</td></tr>` +
+        renderMetricSection(arr)
+      );
+    }
+    if (noCat.length) sections.push(renderMetricSection(noCat));
+
+    parts.push(`<div class="m-section">
+      <div class="m-title">Metrics</div>
+      <table class="cmp-table">
+        <thead><tr><th class="cmp-label-hd">Metric</th>${hdCells}</tr></thead>
+        <tbody>${sections.join('')}</tbody>
+      </table>
+    </div>`);
+  }
+
+  document.getElementById('modal-body').innerHTML = parts.join('');
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+// ── Horizontal scroll ─────────────────────────────────────────────────────────
+function scrollTable(delta) {
+  document.getElementById('table-outer').scrollBy({ left: delta, behavior: 'smooth' });
+}
+
+// ── Initialise ────────────────────────────────────────────────────────────────
+function showNoData() {
+  document.getElementById('bench-table').style.display = 'none';
+  const empty = document.getElementById('empty-state');
+  empty.style.display = '';
+  empty.innerHTML = `
+    <div class="empty-state">
+      <div class="es-icon">&#9888;&#65039;</div>
+      <h2>No benchmark data loaded</h2>
+      <p>
+        Run the data generator from the repository root to compute results
+        and write <code>website/data.js</code>:
+      </p>
+      <pre># From the repo root:
+python website/generate_data.py
+
+# Then open this file in your browser:
+open website/index.html</pre>
+    </div>`;
+}
+
+function init() {
+  if (typeof BENCHMARK_DATA === 'undefined' || BENCHMARK_DATA === null) {
+    showNoData();
+    return;
+  }
+
+  S.data = BENCHMARK_DATA;
+
+  // Header timestamp
+  document.getElementById('gen-ts').textContent =
+    'Generated ' + fmtDate(S.data.generated_at);
+
+  // Stats strip
+  const nRows    = S.data.rows.length;
+  const nMetrics = S.data.all_metrics.length;
+  const mi       = S.data.metric_info || {};
+  const cats     = S.data.metric_categories || [];
+  const catLabels = {};
+  cats.forEach(c => { catLabels[c.id] = c.label; });
+
+  const byCatChips = {};
+  const uncatChips = [];
+  S.data.all_metrics.forEach(m => {
+    const cat = (mi[m] && mi[m].category) || '';
+    if (cat) { (byCatChips[cat] = byCatChips[cat] || []).push(m); }
+    else      { uncatChips.push(m); }
+  });
+
+  const chipGroups = [];
+  for (const catDef of cats) {
+    const metrics = byCatChips[catDef.id];
+    if (!metrics || !metrics.length) continue;
+    chipGroups.push(
+      `<span class="chips-cat-label">${esc(catDef.label)}</span>` +
+      metrics.map(m => `<span class="chip">${esc((mi[m] && mi[m].label) || m)}</span>`).join('')
+    );
+  }
+  if (uncatChips.length) {
+    chipGroups.push(uncatChips.map(m =>
+      `<span class="chip">${esc((mi[m] && mi[m].label) || m)}</span>`
+    ).join(''));
+  }
+
+  document.getElementById('stats-strip').innerHTML = `
+    <div class="stat"><strong>${nRows}</strong> workload${nRows !== 1 ? 's' : ''}</div>
+    <div class="stat"><strong>${nMetrics}</strong> metric${nMetrics !== 1 ? 's' : ''}</div>
+    <div class="stats-chips">${chipGroups.join(' ')}</div>`;
+
+  // Rows
+  S.rows = S.data.rows.map((r, i) => ({ ...r, __idx: i }));
+
+  // Columns
+  S.cols = buildCols(S.data.all_metrics, mi, S.data.metric_categories || []);
+
+  // Render
+  renderAll();
+}
+
+init();
+
+// ── Upload Panel ──────────────────────────────────────────────────────────────
+const UPLOAD_SERVER_URL = window.location.origin;
+
+const uploadState = { files: [], currentStep: 0 };
+const TOTAL_STEPS = 5;
+
+function openUploadPanel() {
+  document.getElementById('upload-backdrop').classList.add('open');
+  document.getElementById('upload-panel').classList.add('open');
+}
+function closeUploadPanel() {
+  document.getElementById('upload-backdrop').classList.remove('open');
+  document.getElementById('upload-panel').classList.remove('open');
+}
+
+// ── Wizard navigation ─────────────────────────────────────────────────────────
+function goToStep(n) {
+  if (n < 0 || n >= TOTAL_STEPS) return;
+  // Mark previous steps as "done"
+  document.querySelectorAll('.wizard-step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+  document.querySelectorAll('.wizard-page').forEach((el, i) => {
+    el.classList.toggle('active', i === n);
+  });
+  uploadState.currentStep = n;
+  // Scroll panel body to top
+  document.querySelector('.upload-panel-body').scrollTop = 0;
+}
+
+// ── Collapsible sections ──────────────────────────────────────────────────────
+function toggleSection(btn) {
+  btn.classList.toggle('collapsed');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('collapsed');
+}
+
+// ── File selection (click + drag-and-drop) ────────────────────────────────────
+(function initUploadUI() {
+  const dropZone  = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const browse    = document.getElementById('dz-browse');
+
+  browse.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', () => {
+    addFiles(Array.from(fileInput.files));
+    fileInput.value = '';
+  });
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) addFiles(Array.from(e.dataTransfer.files));
+  });
+})();
+
+function addFiles(newFiles) {
+  for (const f of newFiles) {
+    const dup = uploadState.files.find(ex => ex.name === f.name && ex.size === f.size);
+    if (!dup) uploadState.files.push(f);
+  }
+  renderFileList();
+}
+function removeFile(index) {
+  uploadState.files.splice(index, 1);
+  renderFileList();
+}
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+}
+function renderFileList() {
+  const list = document.getElementById('file-list');
+  const btn  = document.getElementById('upload-submit');
+  if (!uploadState.files.length) { list.innerHTML = ''; btn.disabled = true; return; }
+  btn.disabled = false;
+  list.innerHTML = uploadState.files.map((f, i) => `
+    <div class="file-item">
+      <span class="fi-name" title="${esc(f.name)}">${esc(f.name)}</span>
+      <span class="fi-size">${formatBytes(f.size)}</span>
+      <button class="fi-remove" onclick="removeFile(${i})" title="Remove">&#10005;</button>
+    </div>`).join('');
+}
+
+// ── Validation helpers ────────────────────────────────────────────────────────
+function val(id) { return (document.getElementById(id).value || '').trim(); }
+function showErr(id, show) {
+  const el = document.getElementById('err-' + id);
+  const input = document.getElementById(id);
+  if (el) el.classList.toggle('visible', show);
+  if (input) input.classList.toggle('invalid', show);
+}
+function validateRequired() {
+  const checks = [
+    ['wl-name',        val('wl-name') !== ''],
+    ['wl-contributor', val('wl-contributor') !== ''],
+    ['wl-contact',     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('wl-contact'))],
+    ['wl-model-family',val('wl-model-family') !== ''],
+    ['wl-phase',       val('wl-phase') !== ''],
+    ['wl-batch-size',  val('wl-batch-size') !== '' && Number(val('wl-batch-size')) > 0],
+    ['wl-seq-len',     val('wl-seq-len') !== '' && Number(val('wl-seq-len')) > 0],
+    ['wl-hw-type',     val('wl-hw-type') !== ''],
+    ['wl-hw-model',    val('wl-hw-model') !== ''],
+    ['wl-hw-total',    val('wl-hw-total') !== '' && Number(val('wl-hw-total')) > 0],
+    ['wl-framework',   val('wl-framework') !== ''],
+  ];
+  let allOk = true;
+  for (const [id, ok] of checks) { showErr(id, !ok); if (!ok) allOk = false; }
+  return allOk;
+}
+
+// ── Collect form data into workload card object ───────────────────────────────
+function buildWorkloadCard() {
+  const csvToList = s => s ? s.split(',').map(x => x.trim()).filter(Boolean) : [];
+  const parseEnvVars = s => {
+    if (!s) return null;
+    const obj = {};
+    s.split(',').map(x => x.trim()).filter(Boolean).forEach(pair => {
+      const eq = pair.indexOf('=');
+      if (eq > 0) obj[pair.slice(0, eq).trim()] = pair.slice(eq + 1).trim();
+    });
+    return Object.keys(obj).length ? obj : null;
+  };
+  return {
+    version: 1,
+    description: val('wl-description') || '',
+    hf_url: val('wl-hf-url') || '',
+    trace_url: val('wl-trace-url') || '',
+    contributor: val('wl-contributor'),
+    contact: val('wl-contact'),
+    workload: {
+      model: {
+        phase: val('wl-phase'),
+        moe: val('wl-moe') === 'true',
+        granularity: val('wl-granularity') || null,
+        model_family: val('wl-model-family'),
+        precision: val('wl-precision') || 'bf16',
+        epochs: Number(val('wl-epochs')) || null,
+        iteration: Number(val('wl-iteration')) || null,
+      },
+      data: {
+        batch_size: Number(val('wl-batch-size')),
+        seq_len: Number(val('wl-seq-len')),
+        dataset: val('wl-dataset') || null,
+      },
+      hardware: {
+        network_topo: {
+          topology: val('wl-net-topo') || null,
+          bandwidth_gbps: [
+            Number(val('wl-bw-scaleout')) || null,
+            Number(val('wl-bw-scaleup')) || null,
+          ].filter(Boolean),
+        },
+        xpu_spec: {
+          type: val('wl-hw-type'),
+          model: val('wl-hw-model'),
+          total_count: Number(val('wl-hw-total')),
+          count_per_node: Number(val('wl-hw-per-node')) || null,
+        },
+        driver_version: val('wl-driver') || null,
+      },
+    },
+    'Model-executor': {
+      framework: {
+        name: val('wl-framework'),
+        compiler_tool_selection: val('wl-compiler') || null,
+      },
+      model_plan_parallelization: {
+        dp_replicate: Number(val('wl-dp-rep')) || 1,
+        dp_shard: Number(val('wl-dp-shard')) || 1,
+        tp: Number(val('wl-tp')) || 1,
+        pp: Number(val('wl-pp')) || 1,
+        cp: Number(val('wl-cp')) || 1,
+        ep: Number(val('wl-ep')) || null,
+        pp_mb: Number(val('wl-pp-mb')) || null,
+      },
+      communication_library: {
+        name: val('wl-comm-lib') || null,
+        version: val('wl-comm-ver') || null,
+        env: parseEnvVars(val('wl-comm-env')),
+      },
+      protocol_selection: csvToList(val('wl-protocols')),
+    },
+    metric_source: {
+      traces: csvToList(val('wl-trace-types')),
+      metrics_specific_trace: csvToList(val('wl-metric-traces')),
+    },
+  };
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+function submitUpload() {
+  // Validate all required fields
+  if (!validateRequired()) {
+    // Jump to the first step with an error
+    const firstErr = document.querySelector('.field-error.visible');
+    if (firstErr) {
+      const page = firstErr.closest('.wizard-page');
+      if (page) {
+        const stepIdx = Number(page.id.replace('wiz-page-', ''));
+        goToStep(stepIdx);
+      }
+    }
+    return;
+  }
+
+  const files       = uploadState.files;
+  const workloadName = val('wl-name');
+  const submitBtn   = document.getElementById('upload-submit');
+  const progressEl  = document.getElementById('upload-progress');
+  const progressBar = document.getElementById('progress-bar');
+  const progressTxt = document.getElementById('progress-text');
+  const resultEl    = document.getElementById('upload-result');
+
+  if (!files.length) return;
+
+  // Build workload card and convert to YAML-ish JSON (server will write YAML)
+  const card = buildWorkloadCard();
+
+  const formData = new FormData();
+  files.forEach(f => formData.append('files', f));
+  formData.append('group_name', workloadName);
+  formData.append('description', card.description);
+  formData.append('workload_card', JSON.stringify(card));
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Uploading…';
+  progressEl.classList.add('active');
+  resultEl.classList.remove('active');
+  progressBar.style.width = '0%';
+  progressTxt.textContent = 'Uploading…';
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', UPLOAD_SERVER_URL + '/api/upload');
+
+  xhr.upload.addEventListener('progress', e => {
+    if (e.lengthComputable) {
+      const pct = Math.round((e.loaded / e.total) * 100);
+      progressBar.style.width = pct + '%';
+      progressTxt.textContent = `Uploading… ${pct}% (${formatBytes(e.loaded)} / ${formatBytes(e.total)})`;
+    }
+  });
+
+  xhr.addEventListener('load', () => {
+    progressEl.classList.remove('active');
+    submitBtn.textContent = 'Upload Trace Files & Generate Workload Card';
+    try {
+      const resp = JSON.parse(xhr.responseText);
+      if (xhr.status === 200 && resp.status === 'ok') {
+        resultEl.className = 'upload-result active success';
+        uploadState.files = [];
+        renderFileList();
+        pollResults(resp.upload_id, resultEl);
+      } else {
+        resultEl.className = 'upload-result active error';
+        resultEl.innerHTML = `<strong>✗ Upload failed</strong><br><span style="font-size:12px">${esc(resp.message || 'Unknown error')}</span>`;
+        submitBtn.disabled = false;
+      }
+    } catch {
+      resultEl.className = 'upload-result active error';
+      resultEl.innerHTML = `<strong>✗ Upload failed</strong><br><span style="font-size:12px">Server returned status ${xhr.status}. Response could not be parsed as JSON.</span>`;
+      submitBtn.disabled = false;
+    }
+  });
+
+  xhr.addEventListener('error', () => {
+    progressEl.classList.remove('active');
+    submitBtn.textContent = 'Upload Trace Files & Generate Workload Card';
+    submitBtn.disabled = false;
+    resultEl.className = 'upload-result active error';
+    resultEl.innerHTML = `<strong>✗ Connection error</strong><br><span style="font-size:12px">Could not reach upload server at <code>${esc(UPLOAD_SERVER_URL)}</code>.<br>This may be caused by a CORS policy block or the server being unreachable. Check the browser console for details.</span>`;
+  });
+
+  xhr.addEventListener('timeout', () => {
+    progressEl.classList.remove('active');
+    submitBtn.textContent = 'Upload Trace Files & Generate Workload Card';
+    submitBtn.disabled = false;
+    resultEl.className = 'upload-result active error';
+    resultEl.innerHTML = `<strong>✗ Upload timed out</strong><br><span style="font-size:12px">The server at <code>${esc(UPLOAD_SERVER_URL)}</code> did not respond in time. Try again or check server status.</span>`;
+  });
+
+  xhr.send(formData);
+}
+
+function pollResults(uploadId, resultEl) {
+  let attempts = 0;
+  const maxAttempts = 100; // ~5 min at 3s intervals
+  const startTime = Date.now();
+
+  function updateWaiting() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    resultEl.innerHTML = `<span style="display:flex;align-items:center;gap:8px">
+      <span style="display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite"></span>
+      <strong>Analyzing trace… ${elapsed}s</strong>
+    </span>`;
+  }
+
+  updateWaiting();
+  const timer = setInterval(async () => {
+    if (++attempts > maxAttempts) { clearInterval(timer); return; }
+    updateWaiting();
+    try {
+      const r = await fetch(UPLOAD_SERVER_URL + '/api/results/' + uploadId);
+      const data = await r.json();
+      if (data.status === 'done') {
+        clearInterval(timer);
+        renderUploadResults(data.results, resultEl);
+      } else if (data.status === 'error') {
+        clearInterval(timer);
+        resultEl.className = 'upload-result active error';
+        resultEl.innerHTML = `<strong>✗ Processing failed</strong><br><span style="font-size:12px">${esc(data.error || 'Unknown error')}</span>`;
+      }
+    } catch (_) {}
+  }, 3000);
+}
+
+function renderUploadResults(results, resultEl) {
+  const metrics = results.metrics || {};
+  const info = results.metric_info || {};
+  const rows = Object.entries(metrics)
+    .filter(([, v]) => v !== null && v !== undefined)
+    .map(([m, v]) => {
+      const mi = info[m] || {};
+      const label = mi.label || m;
+      const unit = mi.unit || '';
+      const hib = mi.higher_is_better;
+      const th = mi.thresholds || {};
+      let color = '#64748b';
+      if (th.high !== undefined && th.mid !== undefined) {
+        const good = hib ? v >= th.high : v <= th.mid;
+        const bad  = hib ? v <= th.mid  : v >= th.high;
+        color = good ? '#16a34a' : bad ? '#dc2626' : '#d97706';
+      }
+      return `<tr><td style="padding:4px 8px;font-size:12px">${esc(label)}</td><td style="padding:4px 8px;font-size:12px;font-weight:600;color:${color}">${typeof v === 'number' ? v.toFixed(4) : esc(String(v))} ${esc(unit)}</td></tr>`;
+    }).join('');
+  if (!rows) {
+    resultEl.className = 'upload-result active error';
+    resultEl.innerHTML = `<strong>✗ No metrics could be computed</strong><br><span style="font-size:12px">Check that your trace file is a supported format and the workload card fields are filled correctly.</span>`;
+    return;
+  }
+  resultEl.className = 'upload-result active success';
+  resultEl.innerHTML = `<strong>✓ Results</strong><table style="margin-top:8px;border-collapse:collapse;width:100%">${rows}</table>`;
+}
+
+</script>
+
+</body>
+</html>

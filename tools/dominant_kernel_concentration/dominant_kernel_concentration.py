@@ -1,0 +1,224 @@
+"""
+Metric: dominant_kernel_concentration
+Description: Percentage of total GPU/TPU time spent in the single most time-consuming
+             kernel (GPU) or HLO category (TPU). High values (>70%) indicate a bottleneck.
+Unit: Percentage (%)
+Returns: Float between 0-100, or -1 if data unavailable
+
+Supported trace types (dispatched via workload YAML):
+  nsys         — reads NSYS SQLite file
+  json         — reads PyTorch-profiler JSON files (rank0_trace.json, …)
+  json_tpu — reads TPU profiler Chrome-trace JSON (groups by hlo_category)
+"""
+
+import json
+import os
+import sys
+import yaml
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from json_sampling import select_json_files
+
+
+def _load_yaml(directory: str) -> dict:
+    for fn in os.listdir(directory):
+        if fn.endswith(".yaml"):
+            with open(os.path.join(directory, fn)) as f:
+                return yaml.safe_load(f) or {}
+    return {}
+
+
+def _get_trace_types(directory: str) -> list:
+    return _load_yaml(directory).get("metric_source", {}).get("traces", [])
+
+
+def _calc_nsys(directory: str) -> float:
+    import sqlite3
+    import pandas as pd
+    from nsys_utils import find_sqlite_file
+
+    sqlite_path = find_sqlite_file(directory)
+    if sqlite_path is None:
+        print(f"Error: No .sqlite file found in {directory}", file=sys.stderr)
+        return -1
+    try:
+        conn = sqlite3.connect(sqlite_path)
+        strings = pd.read_sql_query("SELECT id, value FROM StringIds", conn)
+        string_map = dict(zip(strings['id'], strings['value']))
+        kernels = pd.read_sql_query("""
+            SELECT (end - start) as duration, demangledName, shortName
+            FROM CUPTI_ACTIVITY_KIND_KERNEL
+        """, conn)
+        conn.close()
+        if len(kernels) == 0:
+            return -1
+        kernels['kernel_name'] = (
+            kernels['shortName'].map(string_map)
+            .fillna(kernels['demangledName'].map(string_map))
+            .fillna('Unknown')
+        )
+        kernel_summary = kernels.groupby('kernel_name')['duration'].sum().sort_values(ascending=False)
+        total_time = kernels['duration'].sum()
+        if total_time == 0:
+            return -1
+        return float((kernel_summary.iloc[0] / total_time) * 100)
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return -1
+
+
+def _load_json_events(path: str):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        try:
+            with open(path, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+            idx = content.find('"traceEvents"')
+            if idx == -1:
+                return []
+            bracket = content.find('[', idx)
+            if bracket == -1:
+                return []
+            data = None
+            for suffix in (']}', ']}}}'):
+                try:
+                    data = json.loads(content[bracket:] + suffix)
+                    break
+                except json.JSONDecodeError:
+                    pass
+            if data is None:
+                return []
+            if isinstance(data, list):
+                return data
+        except Exception:
+            return []
+    if isinstance(data, dict):
+        return data.get("traceEvents", [])
+    return []
+
+
+def _calc_json(directory: str) -> float:
+    """
+    Dominant kernel concentration from PyTorch-profiler JSON files.
+    Aggregates kernel durations by name across all rank files, returns
+    the top kernel's share of total kernel time.
+    """
+    json_files = select_json_files(directory)
+    if not json_files:
+        print(f"Error: No JSON files found in {directory}", file=sys.stderr)
+        return -1
+
+    kernel_totals: dict = {}
+    total_dur = 0.0
+
+    for path in json_files:
+        for e in _load_json_events(path):
+            if (
+                isinstance(e, dict)
+                and e.get("ph") == "X"
+                and e.get("cat") == "kernel"
+            ):
+                dur = e.get("dur")
+                if dur is None:
+                    continue
+                dur = float(dur)
+                name = e.get("name", "unknown")
+                kernel_totals[name] = kernel_totals.get(name, 0.0) + dur
+                total_dur += dur
+
+    if total_dur == 0 or not kernel_totals:
+        print(f"Error: No usable kernel data in {directory}", file=sys.stderr)
+        return -1
+
+    top_dur = max(kernel_totals.values())
+    return float((top_dur / total_dur) * 100.0)
+
+
+def _calc_tpu(directory: str) -> float:
+    """
+    Dominant kernel concentration from TPU profiler Chrome-trace JSON.
+    Groups TPU device events by hlo_category (XLA fusions have unique names,
+    so individual names are not meaningful for concentration analysis).
+    """
+    _all_json = [fn for fn in os.listdir(directory) if fn.endswith(".json")]
+    _kineto = [fn for fn in _all_json if fn.startswith("kineto_trace_")]
+    json_files = sorted(os.path.join(directory, fn) for fn in (_kineto or _all_json))
+    if not json_files:
+        print(f"Error: No JSON files found in {directory}", file=sys.stderr)
+        return -1
+
+    try:
+        with open(json_files[0], encoding="utf-8", errors="replace") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"Error reading {json_files[0]}: {e}", file=sys.stderr)
+        return -1
+
+    events = data.get("traceEvents", []) if isinstance(data, dict) else []
+
+    # Identify TPU device PIDs
+    tpu_pids: set = set()
+    for e in events:
+        if (
+            isinstance(e, dict)
+            and e.get("ph") == "M"
+            and e.get("name") == "process_name"
+            and "/device:TPU:" in e.get("args", {}).get("name", "")
+        ):
+            tpu_pids.add(e["pid"])
+
+    cat_dur: dict = {}
+    total_dur = 0.0
+
+    for e in events:
+        if not isinstance(e, dict) or e.get("ph") != "X":
+            continue
+        if tpu_pids and e.get("pid") not in tpu_pids:
+            continue
+        args = e.get("args", {}) or {}
+        hlo_cat = args.get("hlo_category", "")
+        if not hlo_cat:
+            continue  # skip parent/wrapper spans without HLO category
+
+        dev_ps = args.get("device_duration_ps")
+        if dev_ps is not None:
+            dur = float(dev_ps) / 1000.0  # ps → ns
+        else:
+            dur = float(e.get("dur") or 0)
+        if dur <= 0:
+            continue
+
+        cat_dur[hlo_cat] = cat_dur.get(hlo_cat, 0.0) + dur
+        total_dur += dur
+
+    if total_dur == 0 or not cat_dur:
+        print(f"Error: No TPU device events found in {directory}", file=sys.stderr)
+        return -1
+
+    top_dur = max(cat_dur.values())
+    return float((top_dur / total_dur) * 100.0)
+
+
+def metric_cal(directory: str) -> float:
+    trace_types = _get_trace_types(directory)
+    if "nsys" in trace_types:
+        return _calc_nsys(directory)
+    elif "json" in trace_types:
+        return _calc_json(directory)
+    elif "json_tpu" in trace_types:
+        return _calc_tpu(directory)
+    else:
+        print(
+            f"Error: unsupported trace types {trace_types} for dominant_kernel_concentration",
+            file=sys.stderr,
+        )
+        return -1
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python dominant_kernel_concentration.py <trace_directory>")
+        sys.exit(1)
+    print(metric_cal(sys.argv[1]))

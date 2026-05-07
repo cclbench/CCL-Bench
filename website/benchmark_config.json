@@ -1,0 +1,957 @@
+{
+  "_comment": "Add (trace, metrics) pairs here. Run 'python website/generate_data.py' from the repo root to regenerate data. Set 'required_update': true on a trace entry to force recomputation of its metrics. Set 'required_update': true on a metric_info entry to force recomputation of that metric across ALL traces that include it. Set 'metrics': 'auto' to have the generator select all metrics whose trace_types match the workload YAML's metric_source.traces field. Provide an explicit list to override.",
+  "pairs": [
+    {
+      "trace": "/data/ccl-bench_trace_collection/Llama-3.1-8B-torchxla-vllm-tp1-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-mscclpp-4gpu-fsdp_2-tp_2-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-mscclpp-4gpu-tp_2-pp_2-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-nccl-4gpu-tp_2-pp_2-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-mscclpp-4gpu-tp_4-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-nccl-4gpu-tp_4-b_4-s_512/",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-mscclpp-4gpu-fsdp_4-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3-torchtitan-nccl-4gpu-fsdp_4-b_4-s_512",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Llama-3.1-8B-torchxla-vllm-tp2-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Llama-3.1-8B-torchxla-vllm-tp4-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Llama-3.1-8B-torchxla-vllm-tp8-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Qwen3-4B-torchxla-vllm-tp1-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Qwen3-4B-torchxla-vllm-tp2-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Qwen3-4B-torchxla-vllm-tp4-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-tp4-batch128",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Qwen3-4B-torchxla-vllm-tp8-tpu-group-4",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla-train-tp4-dp1-fsdp2-tpu",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep8-dp8-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp2-tp4-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp4-tp2-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep8-dp2-tp4-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep8-dp2-pp2-tp4-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp2-pp2-tp4-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep32-dp8-pp4-tp4-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v3-236b-torchtitan-ep32-dp8-pp8-tp4-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Mixtral8x7B-vllmEP4-Perlmutter[defaultall2all_64_8192]-group12",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Mixtral8x7B-vllmEP4-Perlmutter[defaultall2all_64_16384]-group12",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Mixtral8x7B-vllmEP4-Perlmutter[defaultall2all_32_16384]-group12",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/Mixtral8x7B-vllmEP4-Perlmutter[defaultall2all_32_8192]-group12",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_1_tp_4_ep_4-default-noCUgraph-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_1_tp_4_ep_4-naive-noCUgraph-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_2_tp_2_ep_4-default-noCUgraph-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_2_tp_2_ep_4-naive-noCUgraph-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_4_tp_1_ep_4-default-noCUgraph-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_4_tp_1_ep_4-default-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_4_tp_1_ep_4-naive-noCUgraph-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_4_tp_1_ep_4-naive-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-lite-vllm-dp_4_tp_1_ep_4-pplx-perlmutter-group_9",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama_3.1_8b-megatron_lm-dp_4-tp_2-perlmutter-group_1",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama_3.1_8b-megatron_lm-dp_2-tp_4-perlmutter-group_1",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla_fsdp_v6e-4-tpu-group_21",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla_fsdp_v6e-8-tpu-group_21",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla_hybrid-fsdp-tp_v6e-4-tpu-group_21",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla_hybrid-fsdp-tp_v6e-8-tpu-group_21",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla_tp_v6e-4-tpu-group_21",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-torchxla_tp_v6e-8-tpu-group_21",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch8-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch128-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch8-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch128-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp2-batch8-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp2-batch128-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp2-batch8-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp2-batch128-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch8-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch128-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch8-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch128-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch8-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch128-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch8-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch128-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp2-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch64-in4096-out128-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch64-in4096-out128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch64-in4096-out128-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch64-in4096-out128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch32-in3968-out128-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch32-in3968-out128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch8-gloo-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-vllm-tp4-batch128-gloo-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch8-gloo-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp4-batch128-gloo-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch8-gloo-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-vllm-tp4-ep4-batch128-gloo-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-sglang-tp4-batch8-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-sglang-tp4-batch128-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-sglang-tp4-batch8-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-sglang-tp4-batch128-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-sglang-tp4-ep4-batch8-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-sglang-tp4-ep4-batch128-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-sglang-tp4-batch8-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/qwen3-4b-sglang-tp4-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-sglang-tp4-batch8-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-sglang-tp4-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-sglang-tp4-ep4-batch8-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-moe-16b-sglang-tp4-ep4-batch128-puremscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/nanochat-8b-pytorch-dp-2-dgx_spark",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3_8b_w8_batch32_seq1024-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama3_8b_w8_batch32_seq1024-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek_v3_16b_w8_batch8_seq1024-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek_v3_16b_w8_batch8_seq1024-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek_v3_16b_ep4_dp2_tp4_w8_batch8_seq1024-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek_v3_16b_ep4_dp2_tp4_w8_batch8_seq1024-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek_v3_16b_ep8_dp2_tp4_w8_batch8_seq1024-nccl-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek_v3_16b_ep8_dp2_tp4_w8_batch8_seq1024-mscclpp-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/llama-3.1-8b-vllm-tp8-batch128-perlmutter",
+      "metrics": "auto",
+      "required_update": false
+    },
+    {
+      "trace": "/data/ccl-bench_trace_collection/deepseek-v2-16b-maxtext-train-tp2-ep4-dp1-tpu",
+      "metrics": "auto",
+      "required_update": false
+    }
+  ],
+  "metric_categories": [
+    {
+      "id": "model_execution",
+      "label": "Model Execution",
+      "description": "High-level model throughput and latency metrics"
+    },
+    {
+      "id": "gpu_efficiency",
+      "label": "GPU Efficiency",
+      "description": "GPU utilization, SM coverage, kernel mix, and load balance"
+    },
+    {
+      "id": "memory",
+      "label": "Memory",
+      "description": "Memory bandwidth and transfer overhead"
+    },
+    {
+      "id": "communication",
+      "label": "Communication",
+      "description": "Collective communication performance, overlap, and bandwidth"
+    },
+    {
+      "id": "what_if",
+      "label": "What-If Simulation",
+      "description": "Astra-sim what-if metrics: simulated sensitivity to hardware knob changes"
+    }
+  ],
+  "metric_info": {
+    "avg_step_time": {
+      "required_update": false,
+      "label": "Step Time (s)",
+      "description": "Average per-engine-iteration wall time. For vLLM inference (continuous batching), most iterations are decode steps so this is dominated by decode latency. For training, measures the full forward + backward pass. Serving traces (TPOT/TTFT) are reported separately.",
+      "higher_is_better": false,
+      "unit": "s",
+      "category": "model_execution",
+      "trace_types": [
+        "json_tpu",
+        "json"
+      ],
+      "thresholds": {
+        "high": 10,
+        "mid": 5
+      }
+    },
+    "ttft": {
+      "required_update": false,
+      "label": "TTFT (s)",
+      "description": "Trace-derived time to first token: duration of the first inference forward/engine execution pass. Only inference workloads report this metric.",
+      "higher_is_better": false,
+      "unit": "s",
+      "category": "model_execution",
+      "phases": [
+        "inference"
+      ],
+      "trace_types": [
+        "json_tpu",
+        "json"
+      ],
+      "thresholds": {
+        "high": 1,
+        "mid": 0.2
+      }
+    },
+    "tpot": {
+      "required_update": false,
+      "label": "TPOT (s)",
+      "description": "Trace-derived time per output token proxy: average decode forward/engine execution duration after the first inference pass. Only inference workloads with output_len > 1 report this metric.",
+      "higher_is_better": false,
+      "unit": "s",
+      "category": "model_execution",
+      "phases": [
+        "inference"
+      ],
+      "trace_types": [
+        "json_tpu",
+        "json"
+      ],
+      "thresholds": {
+        "high": 0.2,
+        "mid": 0.05
+      }
+    },
+    "mfu": {
+      "label": "MFU (%)",
+      "description": "Model FLOPs Utilization \u2014 percentage of peak hardware FLOPs utilized during active compute windows",
+      "higher_is_better": true,
+      "unit": "%",
+      "category": "model_execution",
+      "trace_types": [
+        "json_tpu",
+        "json"
+      ],
+      "thresholds": {
+        "high": 50,
+        "mid": 25
+      },
+      "required_update": false
+    },
+    "mean_sm_coverage": {
+      "label": "SM Coverage (%)",
+      "description": "Average Streaming Multiprocessor coverage across all kernels",
+      "higher_is_better": true,
+      "unit": "%",
+      "category": "gpu_efficiency",
+      "trace_types": [
+        "nsys",
+        "json"
+      ],
+      "thresholds": {
+        "high": 80,
+        "mid": 50
+      },
+      "required_update": false
+    },
+    "dominant_kernel_concentration": {
+      "label": "Top Kernel (%)",
+      "description": "Percentage of total GPU/TPU time spent in the single most time-consuming kernel (GPU) or HLO category (TPU)",
+      "higher_is_better": false,
+      "unit": "%",
+      "category": "gpu_efficiency",
+      "trace_types": [
+        "nsys",
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 70,
+        "mid": 40
+      },
+      "required_update": false
+    },
+    "moe_fraction": {
+      "label": "MoE Fraction (%)",
+      "description": "Percentage of GPU time in Mixture of Experts kernels (expert compute, routing, gating, pplx dispatch/combine)",
+      "higher_is_better": false,
+      "unit": "%",
+      "category": "gpu_efficiency",
+      "trace_types": [
+        "nsys",
+        "json"
+      ],
+      "thresholds": {
+        "high": 50,
+        "mid": 20
+      },
+      "required_update": false
+    },
+    "average_memory_bandwidth": {
+      "label": "Avg Mem BW (GB/s)",
+      "description": "Average memory copy bandwidth. GPU: total bytes / total memcpy duration from CUPTI or Kineto. TPU: total bytes / elapsed time between XLA copy-start and copy-done events (conservative lower bound, includes scheduling overhead)",
+      "higher_is_better": true,
+      "unit": "GB/s",
+      "category": "memory",
+      "trace_types": [
+        "nsys",
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 1000,
+        "mid": 500
+      },
+      "required_update": false
+    },
+    "memory_transfer_overhead": {
+      "required_update": false,
+      "label": "Mem Transfer OH (%)",
+      "description": "Percentage of execution time spent exclusively on memory transfers \u2014 memcpy/DMA intervals that do NOT overlap with any compute kernel. Overlapping transfers are unioned before subtraction so concurrent copies are not double-counted. GPU/NSYS: non-overlapped CUDA memcpy time over trace span. GPU JSON: per-rank non-overlapped copy-like kernel time over rank kernel span. TPU: non-overlapped DMA time (copy-start/copy-done device-clock pairs, minus concurrent leaf compute ops) over total step time.",
+      "higher_is_better": false,
+      "unit": "%",
+      "category": "memory",
+      "trace_types": [
+        "nsys",
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 20,
+        "mid": 5
+      }
+    },
+    "communication_fraction": {
+      "label": "Comm Fraction (%)",
+      "description": "Percentage of GPU/TPU time in communication kernels (NCCL, cross-device, P2P, XLA collectives)",
+      "higher_is_better": false,
+      "unit": "%",
+      "category": "communication",
+      "trace_types": [
+        "nsys",
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 50,
+        "mid": 20
+      },
+      "required_update": false
+    },
+    "total_communication_time": {
+      "label": "Comm Time (s)",
+      "description": "Total exposed time in communication kernels (NCCL, cross-device, XLA collectives). We don't double-count overlapped portion.",
+      "higher_is_better": false,
+      "unit": "s",
+      "category": "communication",
+      "trace_types": [
+        "nsys",
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 5,
+        "mid": 0.5
+      },
+      "required_update": false
+    },
+    "bandwidth_utilization_allgather_group_6": {
+      "label": "AllGather BW (GB/s)",
+      "description": "Median effective bandwidth utilization for AllGather operations",
+      "higher_is_better": true,
+      "unit": "GB/s",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 200,
+        "mid": 50
+      },
+      "required_update": false
+    },
+    "bandwidth_utilization_allreduce_group_6": {
+      "label": "AllReduce BW (GB/s)",
+      "description": "Median effective bandwidth for AllReduce operations",
+      "higher_is_better": true,
+      "unit": "GB/s",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 200,
+        "mid": 0.1
+      },
+      "required_update": false
+    },
+    "bandwidth_utilization_alltoall_group_6": {
+      "label": "AllToAll BW (GB/s)",
+      "description": "Median effective bandwidth for AllToAll operations",
+      "higher_is_better": true,
+      "unit": "GB/s",
+      "category": "communication",
+      "trace_types": [
+        "json"
+      ],
+      "thresholds": {
+        "high": 200,
+        "mid": 50
+      },
+      "required_update": false
+    },
+    "bandwidth_utilization_reducescatter_group_6": {
+      "label": "ReduceScatter BW (GB/s)",
+      "description": "Median effective bandwidth for ReduceScatter operations",
+      "higher_is_better": true,
+      "unit": "GB/s",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "json_tpu"
+      ],
+      "thresholds": {
+        "high": 200,
+        "mid": 50
+      },
+      "required_update": false
+    },
+    "bandwidth_utilization_peertopeer_group_6": {
+      "label": "P2P BW (%)",
+      "description": "Average NVLink/PCIe TX throughput utilization during peer-to-peer (pipeline parallelism) operations",
+      "higher_is_better": true,
+      "unit": "%",
+      "category": "communication",
+      "trace_types": [
+        "nsys"
+      ],
+      "thresholds": {
+        "high": 50,
+        "mid": 20
+      },
+      "required_update": false
+    },
+    "compute_comm_overlap": {
+      "label": "Compute-Comm Overlap (%)",
+      "description": "Percentage of total communication time that runs concurrently with compute kernels. Higher values indicate more effective pipelining of communication behind compute.",
+      "higher_is_better": true,
+      "unit": "%",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "json_tpu",
+        "nsys"
+      ],
+      "thresholds": {
+        "high": 50,
+        "mid": 20
+      },
+      "required_update": false
+    },
+    "load_imbalance_ratio": {
+      "label": "Load Imbalance (ratio)",
+      "description": "Max-to-min GPU active time across ranks; 1.0 = perfectly balanced. High values indicate stragglers or uneven work distribution.",
+      "higher_is_better": false,
+      "unit": "ratio",
+      "category": "communication",
+      "trace_types": [
+        "nsys",
+        "json"
+      ],
+      "thresholds": {
+        "high": 1.5,
+        "mid": 1.1
+      },
+      "required_update": false
+    },
+    "straggler": {
+      "label": "Straggler (ratio)",
+      "description": "Straggler delay ratio: (max - min) total NCCL kernel time across ranks divided by max. 0.0 = no straggler; higher values indicate one or more slow ranks.",
+      "higher_is_better": false,
+      "unit": "ratio",
+      "category": "communication",
+      "trace_types": [
+        "json"
+      ],
+      "thresholds": {
+        "high": 0.2,
+        "mid": 0.05
+      },
+      "required_update": false
+    },
+    "scale_up_bw_utility": {
+      "label": "Scale-Up BW Utility (%)",
+      "description": "Percent step-time improvement from doubling scale-up (intra-node) bandwidth, estimated via Astra-sim comm-only simulation. High values indicate the workload is sensitive to intra-node interconnect bandwidth (e.g. NVLink); low values indicate it is compute-bound or communication-light.",
+      "higher_is_better": true,
+      "unit": "%",
+      "category": "what_if",
+      "trace_types": [
+        "json"
+      ],
+      "thresholds": {
+        "high": 10,
+        "mid": 2
+      },
+      "required_update": false
+    },
+    "collective_vol_allreduce_gb": {
+      "label": "AllReduce Volume (GB)",
+      "description": "Total AllReduce data volume from rank 0 over one profiled step, derived from NCCL kernel message sizes (GPU) or XLA bytes_accessed (TPU).",
+      "unit": "GB",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "tpu_profiler",
+        "json_tpu"
+      ],
+      "higher_is_better": false,
+      "thresholds": {
+        "high": 10,
+        "mid": 1
+      },
+      "required_update": false
+    },
+    "collective_vol_allgather_gb": {
+      "label": "AllGather Volume (GB)",
+      "description": "Total AllGather data volume from rank 0 over one profiled step.",
+      "unit": "GB",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "tpu_profiler",
+        "json_tpu"
+      ],
+      "higher_is_better": false,
+      "thresholds": {
+        "high": 10,
+        "mid": 1
+      },
+      "required_update": false
+    },
+    "collective_vol_reducescatter_gb": {
+      "label": "ReduceScatter Volume (GB)",
+      "description": "Total ReduceScatter data volume from rank 0 over one profiled step.",
+      "unit": "GB",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "tpu_profiler",
+        "json_tpu"
+      ],
+      "higher_is_better": false,
+      "thresholds": {
+        "high": 10,
+        "mid": 1
+      },
+      "required_update": false
+    },
+    "collective_vol_alltoall_gb": {
+      "label": "AllToAll Volume (GB)",
+      "description": "Total AllToAll (expert dispatch/combine) data volume from rank 0 over one profiled step. High values indicate MoE routing traffic.",
+      "unit": "GB",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "tpu_profiler",
+        "json_tpu"
+      ],
+      "higher_is_better": false,
+      "thresholds": {
+        "high": 5,
+        "mid": 0.5
+      },
+      "required_update": false
+    },
+    "collective_vol_total_gb": {
+      "label": "Total Collective Volume (GB)",
+      "description": "Sum of AllReduce + AllGather + ReduceScatter + AllToAll data volumes from rank 0 over one profiled step.",
+      "unit": "GB",
+      "category": "communication",
+      "trace_types": [
+        "json",
+        "tpu_profiler",
+        "json_tpu"
+      ],
+      "higher_is_better": false,
+      "thresholds": {
+        "high": 20,
+        "mid": 2
+      },
+      "required_update": false
+    }
+  }
+}

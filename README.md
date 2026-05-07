@@ -29,6 +29,14 @@ Raw traces are not included. The repository keeps lightweight metadata, scripts,
 
 ## Quick Start
 
+Build the AstraSim Docker image (required for the simulation pipeline):
+
+```bash
+docker build -t astra-sim:latest .
+```
+
+The Docker build takes 20–40 minutes and produces a ~14 GB image.
+
 Create a local environment:
 
 ```bash
@@ -44,6 +52,19 @@ python tools/main.py --trace /path/to/trace_dir --metric avg_step_time
 
 # Example
 python tools/main.py --trace llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512/  --metric avg_step_time
+```
+
+Run a what-if simulation on the sample trace (requires the AstraSim Docker image):
+
+```bash
+# Baseline
+python simulation/pipeline.py --mode comm-only \
+    --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512
+
+# What-if: 2× intra-node bandwidth
+python simulation/pipeline.py --mode comm-only \
+    --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512 \
+    --intra-bandwidth 600
 ```
 
 You can see the results we computed over the traces we collected by running:

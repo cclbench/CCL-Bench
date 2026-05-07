@@ -32,7 +32,6 @@ rankN_trace.json  ──►  gen_chakra_et.py  ──►  chakra_trace.*.et
 Docker must be running with the `astra-sim:latest` image available. To build it:
 
 ```bash
-cd plug-ins/astra-sim-hybrid-parallelism
 docker build -t astra-sim:latest .
 ```
 
@@ -43,14 +42,14 @@ No host Python packages are required beyond the standard library — all heavy l
 ## Quick Start (full pipeline)
 
 ```bash
-# Baseline: deepseek-v3-16b on A100 Slingshot
+# Baseline: llama3 torchtitan NCCL 4-GPU FSDP/TP trace
 python simulation/pipeline.py --mode comm-only \
     --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512
 
-# What-if: 2× scale-out network bandwidth
+# What-if: 2× scale-up network bandwidth
 python simulation/pipeline.py --mode comm-only \
     --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512 \
-    --bandwidth 400
+    --intra-bandwidth 600 # 2 * 300
 
 # What-if: different collective algorithm
 python simulation/pipeline.py --mode comm-only \
@@ -70,7 +69,7 @@ Ready-to-run scripts are in `simulation/examples/`:
 | Script | What it shows |
 |--------|---------------|
 | `00_mock.sh` | Synthetic traces through the AstraSim pipeline; baseline vs 2× inter-BW vs H100 NVLink |
-| `01_baseline.sh` | Single baseline run, ep4-dp2-tp4, A100 defaults |
+| `01_baseline.sh` | Baseline run on the sample `llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512/` trace |
 
 
 ## Arguments
@@ -198,6 +197,12 @@ This TPU path is still approximate:
 - XLA `broadcast` is treated as local compute, not a distributed collective.
 
 ## Available Traces
+
+Sample trace (included in the repository):
+
+```
+llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512/
+```
 
 Torchtitan traces (support process-group-aware simulation):
 

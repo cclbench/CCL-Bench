@@ -22,7 +22,7 @@ Raw traces are not included. The repository keeps lightweight metadata, scripts,
 | `trace_gen/` | Guidance and helpers for collecting profiler traces. |
 | `tools/` | Metric toolkit. Each metric is implemented as an importable tool. |
 | `website/` | Static leaderboard and generated benchmark data. |
-| `workload_suite/` | Standard workload definitions used to for compare software and hardware. |
+| `workload_suite/` | Standard workload definitions used to compare software and hardware. |
 | `scripts/` | Reproducibility and collection scripts for specific systems or experiments. |
 | `agent/` | Experimental/private config tuning agents. |
 | `simulation/` | Experimental/private trace-based simulation utilities. |
@@ -74,7 +74,7 @@ python -m http.server 8081
 ```
 Then open `http://localhost:8081`.
 
-If you want to render new traces, update `website/generate_config.json` and upload entries. Regenerate the static website data after adding or changing configured traces.
+If you want to render new traces, update `website/benchmark_config.json` and upload entries. Regenerate the static website data after adding or changing configured traces.
 
 ```bash
 python website/generate_data.py

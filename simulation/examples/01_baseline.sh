@@ -24,7 +24,7 @@ python "$REPO/simulation/pipeline.py" \
     --bandwidth "$INTER_BW" \
     --latency "$INTER_LAT" \
     --collective-algo ring \
-    --compute-model kernels
+    --compute-model gap
 
 echo
 echo "Outputs in: $OUTDIR"

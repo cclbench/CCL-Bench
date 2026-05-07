@@ -49,7 +49,7 @@ python simulation/pipeline.py --mode comm-only \
 # What-if: 2× scale-up network bandwidth
 python simulation/pipeline.py --mode comm-only \
     --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512 \
-    --intra-bandwidth 600 # 2 * 300
+    --intra-bandwidth 600
 
 # What-if: different collective algorithm
 python simulation/pipeline.py --mode comm-only \
@@ -172,51 +172,10 @@ The pipeline prints a summary table at the end:
 
 Uses the official Chakra toolchain (`chakra_trace_link` + `chakra_converter`) to merge PyTorch execution traces with kineto device traces, producing fully attributed Chakra ET files with compute roofline enabled.
 
-### TPU MaxText/XLA example
-
-`simulation/examples/12_tpu_bandwidth_sweep_deepseekv2_maxtext.sh` uses `pipeline.py --mode tpu-xla` for:
-
-```
-/data/ccl-bench_trace_collection/deepseek-v2-16b-maxtext-train-tp2-ep4-dp1-tpu/
-```
-
-That trace is a single JAX/XLA TPU Chrome trace (`*.trace.json`), not the `rankN_trace.json` format consumed by `pipeline.py --mode comm-only`. TPU/XLA mode calls `gen_tpu_xla_chakra_et.py` inside the AstraSim Docker image, selects one clustered `jit_train_step` iteration, emits `chakra_trace.0.et` ... `chakra_trace.7.et`, and runs AstraSim with an 8-chip TPU torus represented as:
-
-```yaml
-topology: [ Ring, Ring ]
-npus_count: [ 2, 4 ]
-```
-
-In TPU `--compute-model kernels`, non-collective HLO/device events with TPU device timing (`device_duration_ps`, `hlo_category`) are emitted as Chakra `COMP_NODE`s, while XLA collective HLO events such as `all-reduce`, `all-gather`, `reduce-scatter`, `all-to-all`, and `collective-permute` are emitted as `COMM_COLL_NODE`s. Positive idle intervals between rank-local emitted events are represented as gap `COMP_NODE`s, so the generated trace is closer to the GPU `--compute-model kernels --kernel-dependency-mode rank` path than the older collective-gap-only path.
-
-This TPU path is still approximate:
-
-- The MaxText trace may not expose exact collective payload sizes, so the example uses `FALLBACK_COMM_SIZE` when no byte count is present.
-- If a collective event is not associated with a specific TPU rank, the generator mirrors it to all ranks so AstraSim can model synchronization.
-- The model serializes emitted events per TPU rank; it does not reconstruct full XLA dependency DAG overlap or TPU compiler scheduling.
-- XLA `broadcast` is treated as local compute, not a distributed collective.
-
 ## Available Traces
 
 Sample trace (included in the repository):
 
 ```
 llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512/
-```
-
-Torchtitan traces (support process-group-aware simulation):
-
-```
-/data/ccl-bench_trace_collection/
-  deepseek-v3-16b-torchtitan-ep4-dp2-pp2-tp4-perlmutter/   # 16 GPUs
-  deepseek-v3-16b-torchtitan-ep4-dp2-tp4-perlmutter/
-  deepseek-v3-16b-torchtitan-ep4-dp4-tp2-perlmutter/
-  deepseek-v3-16b-torchtitan-ep8-dp2-pp2-tp4-perlmutter/
-  deepseek-v3-16b-torchtitan-ep32-dp8-pp4-tp4-perlmutter/  # 128 GPUs
-```
-
-Full-fidelity traces (for `--mode full`):
-
-```
-trace_collection_backlog/llama-3.1-8b-torchtitan-perlmutter/
 ```

@@ -27,35 +27,6 @@ rankN_trace.json  ──►  gen_chakra_et.py  ──►  chakra_trace.*.et
 | `full` | `pytorch_et_N.json` + `kineto_trace_N.json` | Full op-graph fidelity via `chakra_trace_link` |
 | `tpu-xla` | single TPU `*.trace.json` (JAX/XLA Chrome JSON) | One XLA iteration replayed as HLO/device kernels plus XLA collectives |
 
-## Quick Start (no Docker required)
-
-`mock_trace_gen.py` + `mock_pipeline.py` provide a full what-if simulation
-without Docker, AstraSim, or real traces.  They use the same trace format and
-network parameters as the full pipeline, so results can later be validated
-against AstraSim.
-
-```bash
-# Generate 8-rank synthetic traces for Llama-3.1-8B (tp=4, dp=2)
-python simulation/mock_trace_gen.py \
-    --output-dir /tmp/mock_trace \
-    --tp 4 --dp 2 --layers 32
-
-# Baseline: A100 NVLink (400 GB/s) + Slingshot (25 GB/s)
-python simulation/mock_pipeline.py \
-    --trace-dir /tmp/mock_trace \
-    --intra-bandwidth 400 --bandwidth 25
-
-# What-if: 2× scale-out bandwidth
-python simulation/mock_pipeline.py \
-    --trace-dir /tmp/mock_trace \
-    --intra-bandwidth 400 --bandwidth 50
-
-# Run individual analytical what-if commands with mock_pipeline.py as needed.
-```
-
-The mock traces are also compatible with `pipeline.py --mode comm-only`, so they
-serve as test fixtures for the full AstraSim pipeline.
-
 ## Prerequisites (full AstraSim pipeline)
 
 Docker must be running with the `astra-sim:latest` image available. To build it:
@@ -74,29 +45,17 @@ No host Python packages are required beyond the standard library — all heavy l
 ```bash
 # Baseline: deepseek-v3-16b on A100 Slingshot
 python simulation/pipeline.py --mode comm-only \
-    --trace-dir /data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp2-pp2-tp4-perlmutter
+    --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512
 
 # What-if: 2× scale-out network bandwidth
 python simulation/pipeline.py --mode comm-only \
-    --trace-dir /data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp2-pp2-tp4-perlmutter \
+    --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512 \
     --bandwidth 400
 
 # What-if: different collective algorithm
 python simulation/pipeline.py --mode comm-only \
-    --trace-dir /data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp2-pp2-tp4-perlmutter \
+    --trace-dir llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512 \
     --collective-algo halving_doubling
-
-# What-if: H100 hardware (900 TFLOPS BF16, 3.35 TB/s HBM, 900 GB/s NVLink)
-python simulation/pipeline.py --mode full \
-    --trace-dir trace_collection_backlog/llama-3.1-8b-torchtitan-perlmutter \
-    --peak-perf 900 --mem-bw 3350 --gpus-per-node 8 \
-    --intra-bandwidth 900 --bandwidth 50
-
-# TPU/XLA: 8-chip TPU torus bandwidth what-if
-python simulation/pipeline.py --mode tpu-xla \
-    --trace-dir /data/ccl-bench_trace_collection/deepseek-v2-16b-maxtext-train-tp2-ep4-dp1-tpu \
-    --compute-model kernels --tpu-ranks 8 --tpu-torus-dims 2,4 \
-    --tpu-iteration-index 1 --bandwidth 3200 --latency 100
 
 # Synthetic trace smoke test through AstraSim
 bash simulation/examples/00_mock.sh
@@ -113,11 +72,6 @@ Ready-to-run scripts are in `simulation/examples/`:
 | `00_mock.sh` | Synthetic traces through the AstraSim pipeline; baseline vs 2× inter-BW vs H100 NVLink |
 | `01_baseline.sh` | Single baseline run, ep4-dp2-tp4, A100 defaults |
 
-Run any example from the repo root:
-
-```bash
-bash simulation/examples/02_bandwidth_sweep.sh
-```
 
 ## Arguments
 

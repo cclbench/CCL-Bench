@@ -1,11 +1,9 @@
 #!/bin/bash
-# Baseline simulation: deepseek-v3-16b ep4-dp2-tp4 on A100 + Slingshot.
-# 8 ranks, no pipeline parallelism → clean collective-only trace.
 # Two-tier hardware: 4 GPUs/node NVLink scale-up + Slingshot scale-out.
 
 set -e
 REPO=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-TRACE=/data/ccl-bench_trace_collection/deepseek-v3-16b-torchtitan-ep4-dp2-tp4-perlmutter
+TRACE="$REPO/llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512"
 OUTDIR="$REPO/simulation/examples/01_baseline_output"
 
 GPUS_PER_NODE=4

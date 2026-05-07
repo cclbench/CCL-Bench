@@ -10,18 +10,19 @@ The project is organized around three layers:
 - **Analysis**: metric tools that consume trace directories and return leaderboard values.
 - **Presentation**: a static website generated from configured trace and metric pairs.
 
-Raw traces are intentionally not committed to git. They are large artifacts and should live in shared storage such as `/data/ccl-bench_trace_collection` or an external artifact store. The repository keeps lightweight metadata, scripts, metric code, and generated website data.
+
+Raw traces are not included. The repository keeps lightweight metadata, scripts, metric code, and generated website data. However, we provide a sample trace for testing purpose, under `llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512`.
 
 ## Repository Layout
 
 | Path | Purpose |
 | --- | --- |
-| `workload_card_template.yaml` | Canonical metadata template for benchmark rows. |
-| `trace_collection/` | Lightweight workload cards and trace collection notes. |
+| `workload_card_template.yaml` | Workload card template for benchmark rows. |
+| `trace_collection/` | Lightweight workload cards and run scripts. |
 | `trace_gen/` | Guidance and helpers for collecting profiler traces. |
 | `tools/` | Metric toolkit. Each metric is implemented as an importable tool. |
 | `website/` | Static leaderboard and generated benchmark data. |
-| `workloads/` | Standard workload definitions used to select model and parallelism targets. |
+| `workload_suite/` | Standard workload definitions used to for compare software and hardware. |
 | `scripts/` | Reproducibility and collection scripts for specific systems or experiments. |
 | `agent/` | Experimental/private config tuning agents. |
 | `simulation/` | Experimental/private trace-based simulation utilities. |
@@ -40,17 +41,25 @@ Run one metric on a trace directory:
 
 ```bash
 python tools/main.py --trace /path/to/trace_dir --metric avg_step_time
+
+# Example
+python tools/main.py --trace llama3-torchtitan-nccl-4gpu-fsdp_2-tp_2-b_4-s_512/  --metric avg_step_time
 ```
 
-Regenerate the static website data after adding or changing configured traces:
+You can see the results we computed over the traces we collected by running:
+
+```
+python -m http.server 8081
+```
+Then open `http://localhost:8081`.
+
+If you want to render new traces, update `website/generate_config.json` and upload entries. Regenerate the static website data after adding or changing configured traces.
 
 ```bash
 python website/generate_data.py
 cd website
 python -m http.server 8081
 ```
-
-Then open `http://localhost:8081`.
 
 ## Adding A Benchmark Row
 
@@ -94,7 +103,7 @@ Do not commit:
 
 ## Trace Storage Location
 
-The canonical shared trace directory on Perlmutter is `/data/ccl-bench_trace_collection`.
+The canonical shared trace directory is set to be `/data/ccl-bench_trace_collection`.
 This path appears in three places and must be updated consistently if you move traces
 to a different mount point or machine:
 
@@ -102,7 +111,6 @@ to a different mount point or machine:
 | --- | --- |
 | `website/benchmark_config.json` — every `"trace":` path | Update each path prefix to match your local mount point. The paths must resolve on whichever machine runs `python website/generate_data.py`. |
 | `agent/ccl_bench_agent/tuning_config.yaml` — `publish_dir` | Set `publish_dir` to the desired destination. CCL-Search copies per-iteration traces there. Leave empty to skip publishing. |
-| `README.md` — example path in the intro paragraph | Documentation only; no functional effect. |
 
 If you are running on a different cluster, set `publish_dir` in `tuning_config.yaml` and
 update the `"trace":` paths in `benchmark_config.json` before regenerating the website.

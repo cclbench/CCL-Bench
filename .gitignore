@@ -114,3 +114,4 @@ tpu_scaleup_utility
 cluster_performance_sweep
 scripts
 trace_collection_bad
+deepseek-v3-16b-torchtitan-ep4-dp2-tp4-perlmutter

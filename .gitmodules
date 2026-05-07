@@ -1,3 +1,6 @@
 [submodule "plug-ins/astra-sim-hybrid-parallelism"]
 	path = plug-ins/astra-sim-hybrid-parallelism
 	url = https://github.com/astra-sim/astra-sim.git
+[submodule "plug-ins/astr"]
+	path = plug-ins/astr
+	url = https://github.com/astra-sim/astra-sim.git
